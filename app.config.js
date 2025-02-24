@@ -1,4 +1,4 @@
-{
+export default {
   "expo": {
     "name": "carpool-app",
     "slug": "carpool-app",
@@ -16,7 +16,12 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ernomitrovic.carpoolapp"
+      "package": "com.ernomitrovic.carpoolapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": process.env.GOOGLE_MAPS_API_KEY
+        }
+      }
     },
     "web": {
       "bundler": "metro",
@@ -33,7 +38,13 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
     ],
     "experiments": {
       "typedRoutes": true

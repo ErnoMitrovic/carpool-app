@@ -15,15 +15,8 @@ const RootLayout = () => {
   });
 
   useEffect(() => {
-    const requestPermissions = async () => {
-      if (!status?.granted) {
-        await setStatus();
-      }
-    };
-
     if (loaded) {
       SplashScreen.hideAsync();
-      requestPermissions();
     }
   }, [loaded]);
 

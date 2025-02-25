@@ -1,52 +1,31 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { getCurrentPositionAsync, useForegroundPermissions } from 'expo-location'
 import MapView, { Region } from 'react-native-maps';
+import { CarpoolMapProps } from './types';
 
-const CarpoolMap = () => {
-    const [status, setStatus] = useForegroundPermissions();
-    const [region, setRegion] = useState<Region>();
-    const mapRef = useRef<MapView>(null); // Reference to the MapView
+const CarpoolMap: FC<CarpoolMapProps> = ({initialRegion, markers}) => {
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
-        const getLocation = async () => {
-            if (status?.granted) {
-                const location = await getCurrentPositionAsync();
-                const newRegion = {
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                    latitudeDelta: 0.01, // Smaller delta for a closer zoom
-                    longitudeDelta: 0.01
-                };
-
-                setRegion(newRegion);
-
-                // Animate map to user location
-                if (mapRef.current) {
-                    mapRef.current.animateToRegion(newRegion, 1000);
-                }
-            } else {
-                setStatus();
-            }
-        };
-
-        getLocation();
-    }, [status]);
+        if (initialRegion) {
+            setLoaded(true);
+        }
+    }, [initialRegion]);
 
     return (
         <View style={styles.container}>
-            <MapView
-                ref={mapRef} // Attach reference to MapView
-                style={styles.map}
+            {loaded && <MapView style={styles.map}
+                followsUserLocation={true}
                 showsUserLocation={true}
                 loadingEnabled={true}
-                region={region} // Dynamically update region
-            />
+                initialRegion={initialRegion}
+            />}
         </View>
-    );
-};
+    )
+}
 
-export default CarpoolMap;
+export default CarpoolMap
 
 const styles = StyleSheet.create({
     container: {
@@ -56,6 +35,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     map: {
-        ...StyleSheet.absoluteFillObject,
-    },
-});
+        ...StyleSheet.absoluteFillObject
+    }
+})

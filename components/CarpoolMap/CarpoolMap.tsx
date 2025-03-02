@@ -1,10 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { FC, useEffect, useState } from 'react'
-import { getCurrentPositionAsync, useForegroundPermissions } from 'expo-location'
-import MapView, { Region } from 'react-native-maps';
+import MapView, { Marker, Region } from 'react-native-maps';
 import { CarpoolMapProps } from './types';
 
-const CarpoolMap: FC<CarpoolMapProps> = ({initialRegion, markers}) => {
+const CarpoolMap: FC<CarpoolMapProps> = ({ initialRegion, markers }) => {
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
@@ -20,7 +19,14 @@ const CarpoolMap: FC<CarpoolMapProps> = ({initialRegion, markers}) => {
                 showsUserLocation={true}
                 loadingEnabled={true}
                 initialRegion={initialRegion}
-            />}
+            >
+                {markers.map((marker, index) => (
+                    <Marker
+                        key={index}
+                        coordinate={marker.coordinate}
+                    />
+                ))}
+            </MapView>}
         </View>
     )
 }

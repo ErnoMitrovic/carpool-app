@@ -3,6 +3,7 @@ import React from 'react'
 import { Tabs } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { CarpoolTabBar } from '../../components/CarpoolTabBar';
+import IconSymbol from '@/components/ui/IconSymbol';
 
 const NavBar = () => {
     const colorScheme = useColorScheme();
@@ -20,7 +21,10 @@ const NavBar = () => {
             tabBarButton: CarpoolTabBar,
             headerShown: false,
         }}>
-            <Tabs.Screen name="index" />
+            <Tabs.Screen name="index" options={{
+                title: 'Ride',
+                tabBarIcon: ({ color }) => <IconSymbol size={28} name="car.fill" color={color} />
+            }} />
         </Tabs>
     )
 }

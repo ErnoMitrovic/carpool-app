@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native'
 import React, { FC } from 'react'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SymbolWeight } from 'expo-symbols';
@@ -13,7 +12,8 @@ const MAPPING = {
     'chevron.left.forwardslash.chevron.right': 'code',
     'chevron.right': 'chevron-right',
     'car.fill': 'directions-car',
-    'search': 'search',
+    'magnifyingglass': 'search',
+    'xmark': 'close',
 } as Partial<
     Record<
         import('expo-symbols').SymbolViewProps['name'],
@@ -29,6 +29,7 @@ interface IconSymbolProps {
     color: string | OpaqueColorValue;
     style?: StyleProp<TextStyle>;
     weight?: SymbolWeight;
+    onPress?: () => void;
 }
 
 /**
@@ -41,8 +42,9 @@ const IconSymbol: FC<IconSymbolProps> = ({
     size = 24,
     color,
     style,
+    onPress,
 }) => {
-    return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+    return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} onPress={onPress} />;
 }
 
 export default IconSymbol

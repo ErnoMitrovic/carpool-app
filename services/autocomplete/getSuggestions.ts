@@ -7,20 +7,23 @@ import Constants from 'expo-constants';
  * Not use in mass production, just for cheap prototyping.
  */
 
-const HERE_KEY = Constants.expoConfig?.extra?.hereApiKey;
+const HERE_KEY = Constants.expoConfig?.extra?.here?.apiKey;
+const BASE_URL = Constants.expoConfig?.extra?.here?.autosuggestUrl;
 
 export type LocationItem = {
     title: string;
-    position: {
-        lat: number;
-        lng: number;
-    }
+    position: Position;
     id: string;
+}
+
+export type Position = {
+    lat: number;
+    lng: number;
 }
 
 export const getSuggestions = async (query: string, currentLocation: string) => {
     try {
-        const response = await axios.get('https://autosuggest.search.hereapi.com/v1/autosuggest', {
+        const response = await axios.get(BASE_URL, {
             params: {
                 apiKey: HERE_KEY,
                 q: query,

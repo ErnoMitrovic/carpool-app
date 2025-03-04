@@ -56,7 +56,10 @@ export default {
       "eas": {
         "projectId": "f0216cf9-38e0-4429-850e-eb5ff73179a5"
       },
-      "hereApiKey": process.env.HERE_API_KEY
+      "here": {
+        "apiKey": process.env.HERE_API_KEY,
+        "autosuggestUrl": "https://autosuggest.search.hereapi.com/v1/autosuggest"
+      }
     }
   }
 }

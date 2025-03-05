@@ -2,7 +2,6 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
 const TimePicker = () => {
-
     return (
         <View>
             <Text>TimePicker</Text>

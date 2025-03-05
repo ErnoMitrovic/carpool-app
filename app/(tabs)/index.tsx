@@ -6,6 +6,7 @@ import { MapMarkerProps, Region } from 'react-native-maps'
 import { getCurrentPositionAsync, LocationObject, useForegroundPermissions } from 'expo-location'
 import { SearchBar } from '@/components/SearchBar'
 import { Position } from '@/services/autocomplete/getSuggestions'
+import { TimePicker } from '@/components/TimePicker'
 
 const RideScreen = () => {
   const [markers, setMarkers] = useState<MapMarkerProps[]>([]);
@@ -68,6 +69,7 @@ const RideScreen = () => {
         <SearchBar placeholder="End location" onLocationSelect={onEndLocationSelect}
           currentPosition={currentLocation?.coords}
         />
+        <TimePicker />
       </View>
       <StatusBar hidden={true} />
     </>

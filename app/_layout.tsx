@@ -1,8 +1,9 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { darkTheme, lightTheme } from "@/components/ui/CarpoolTheme";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
+import { PaperProvider } from "react-native-paper";
 
 const RootLayout = () => {
   const colorScheme = useColorScheme();
@@ -20,11 +21,11 @@ const RootLayout = () => {
     return null;
   }
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <PaperProvider theme={colorScheme === 'dark' ? darkTheme : lightTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
-    </ThemeProvider>);
+    </PaperProvider>);
 }
 
 export default RootLayout;

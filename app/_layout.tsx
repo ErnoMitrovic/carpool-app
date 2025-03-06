@@ -4,6 +4,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { PaperProvider } from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const RootLayout = () => {
   const colorScheme = useColorScheme();
@@ -21,11 +22,13 @@ const RootLayout = () => {
     return null;
   }
   return (
-    <PaperProvider theme={colorScheme === 'dark' ? darkTheme : lightTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </PaperProvider>);
+    <SafeAreaProvider>
+      <PaperProvider theme={colorScheme === 'dark' ? darkTheme : lightTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </PaperProvider>
+    </SafeAreaProvider>);
 }
 
 export default RootLayout;

@@ -1,7 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { FC } from 'react'
+import { TimePickerProps } from './types'
 
-const TimePicker = () => {
+// TODO: Implement TimePicker for iOS and web
+const TimePicker: FC<TimePickerProps> = () => {
     return (
         <View>
             <Text>TimePicker</Text>

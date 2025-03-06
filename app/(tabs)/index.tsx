@@ -7,8 +7,12 @@ import { getCurrentPositionAsync, LocationObject, useForegroundPermissions } fro
 import { SearchBar } from '@/components/SearchBar'
 import { Position } from '@/services/autocomplete/getSuggestions'
 import { TimePicker } from '@/components/TimePicker'
+import { Button, Surface } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const RideScreen = () => {
+  const insets = useSafeAreaInsets();
+
   const [markers, setMarkers] = useState<MapMarkerProps[]>([]);
   const [initialRegion, setInitialRegion] = useState<Region>();
   const [currentRegion, setCurrentRegion] = useState<Region>();
@@ -18,28 +22,34 @@ const RideScreen = () => {
   const [startLocation, setStartLocation] = useState<Position>();
   const [endLocation, setEndLocation] = useState<Position>();
 
+  const [dateTime, setDateTime] = useState<Date>(new Date());
+
   const onStartLocationSelect = (pos: Position) => {
-    setMarkers([...markers, {
-      coordinate: {
-        latitude: pos.lat,
-        longitude: pos.lng
-      }
-    }]);
+    setMarkers((prevMarkers) => [
+      ...prevMarkers,
+      {
+        coordinate: {
+          latitude: pos.lat,
+          longitude: pos.lng,
+        },
+      },
+    ]);
     setCurrentRegion({ latitude: pos.lat, longitude: pos.lng, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
     setStartLocation(pos);
-    console.log(startLocation);
   }
 
   const onEndLocationSelect = (pos: Position) => {
-    setMarkers([...markers, {
-      coordinate: {
-        latitude: pos.lat,
-        longitude: pos.lng
-      }
-    }]);
+    setMarkers((prevMarkers) => [
+      ...prevMarkers,
+      {
+        coordinate: {
+          latitude: pos.lat,
+          longitude: pos.lng,
+        },
+      },
+    ]);
     setCurrentRegion({ latitude: pos.lat, longitude: pos.lng, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
     setEndLocation(pos);
-    console.log(endLocation);
   }
 
   useEffect(() => {
@@ -61,22 +71,26 @@ const RideScreen = () => {
 
   return initialRegion ? (
     <>
-      <CarpoolMap initialRegion={initialRegion} markers={markers} currentRegion={currentRegion} />
-      <View style={styles.searchContainer}>
+      <Surface style={[styles.searchContainer, { paddingTop: insets.top + 4 }]}>
         <SearchBar placeholder="Start location" onLocationSelect={onStartLocationSelect}
           currentPosition={currentLocation?.coords}
         />
         <SearchBar placeholder="End location" onLocationSelect={onEndLocationSelect}
           currentPosition={currentLocation?.coords}
         />
-        <TimePicker />
-      </View>
+        <TimePicker value={dateTime} onChange={(event, selectedDate) => {
+          if (event.type === 'set')
+            setDateTime(selectedDate ?? dateTime);
+        }} />
+        <Button mode='contained' onPress={() => console.log('Ride request sent')}>Request ride</Button>
+      </Surface>
+      <CarpoolMap initialRegion={initialRegion} markers={markers} currentRegion={currentRegion} />
       <StatusBar hidden={true} />
     </>
   ) : <ActivityIndicator size="large" style={styles.container} />
 }
 
-export default RideScreen
+export default RideScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -85,10 +99,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchContainer: {
-    position: "absolute",
-    top: 40,
-    left: 10,
-    right: 10,
-    borderRadius: 10
-  }
+    padding: 10,
+    gap: 10,
+  },
 })

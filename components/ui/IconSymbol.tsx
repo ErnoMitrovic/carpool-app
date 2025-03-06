@@ -14,6 +14,7 @@ const MAPPING = {
     'car.fill': 'directions-car',
     'magnifyingglass': 'search',
     'xmark': 'close',
+    'location': 'location-on'
 } as Partial<
     Record<
         import('expo-symbols').SymbolViewProps['name'],

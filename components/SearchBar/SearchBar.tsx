@@ -1,8 +1,8 @@
 import { FlatList, StyleSheet, View } from 'react-native'
 import React, { FC, useState } from 'react'
 import { SearchBarProps } from './types'
-import { getSuggestions } from '@/services'
-import { LocationItem } from '@/services/autocomplete/getSuggestions'
+import { getSuggestions } from '@/services/autocomplete'
+import { LocationItem } from '@/services/autocomplete'
 import IconSymbol from '../ui/IconSymbol'
 import { Divider, List, Surface, TextInput, useTheme } from 'react-native-paper'
 

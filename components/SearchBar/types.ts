@@ -1,4 +1,4 @@
-import { Position } from "@/services/autocomplete/getSuggestions";
+import { Position } from "@/services/autocomplete";
 
 export interface SearchBarProps {
     placeholder: string;

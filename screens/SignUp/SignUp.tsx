@@ -5,6 +5,7 @@ import { Role, signUp, SignUpRequest } from '@/services/auth';
 import { Controller, useForm } from 'react-hook-form';
 import { StatusBar } from 'expo-status-bar';
 import IconSymbol from '@/components/ui/IconSymbol';
+import { PhoneInput } from '@/components/PhoneInput';
 
 type SignUpData = {
     name: string;
@@ -99,14 +100,9 @@ const SignUp = () => {
                 rules={{
                     required: { value: true, message: ERROR_MESSAGES.required }
                 }}
-                render={({ field: { onChange, onBlur, value } }) => (
+                render={({ field: { onChange, value, onBlur } }) => (
                     <>
-                        <TextInput
-                            placeholder='Phone'
-                            onBlur={onBlur}
-                            value={value}
-                            onChangeText={onChange}
-                        />
+                        <PhoneInput phone={value} onBlur={onBlur} onChangePhone={onChange} />
                         <HelperText type='error'>{errors.phone?.message}</HelperText>
                     </>
                 )}

@@ -27,7 +27,6 @@ const AuthProvider = (props: { children: React.ReactNode }): React.ReactElement 
         if (user) {
             setIsSignedIn(true);
             const tokenData = await user.getIdTokenResult();
-            console.log(tokenData);
             const role = tokenData.claims.role as Role;
             setRole(role);
         } else {

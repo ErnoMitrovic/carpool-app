@@ -4,10 +4,18 @@ import IconSymbol from '@/components/ui/IconSymbol';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import RideScreen from '.';
 import { CarpoolTabBar } from '@/components/CarpoolTabBar';
+import { useAuth } from '@/store/AuthContext';
+import { SignUp } from '@/screens/SignUp';
 
 const Tab = createBottomTabNavigator();
 
 const NavBar = () => {
+    const { isSignedIn } = useAuth();
+
+    if(!isSignedIn) {
+        return <SignUp />
+    }
+
     return (
         <Tab.Navigator screenOptions={{
             tabBarStyle: Platform.select({

@@ -1,4 +1,4 @@
-import { getItemAsync, setItemAsync, WHEN_UNLOCKED } from "expo-secure-store";
+import { getAuth, signInWithCustomToken, signInWithEmailAndPassword } from "firebase/auth";
 import httpInstance from "./httpInstance"
 
 export enum Role {
@@ -8,44 +8,32 @@ export enum Role {
 
 export interface AuthResponse {
     token: string;
-    role: Role;
 }
 
-export interface AuthRequest {
+export interface LoginRequest {
     email: string;
     password: string;
 }
 
-export const signIn = async (requestBody: AuthRequest) => {
-    const response = await httpInstance.post<AuthResponse>('/auth/token', requestBody);
-    return response.data;
+export interface SignUpRequest extends LoginRequest {
+    name: string;
+    phone: string;
+    universityId: number;
 }
 
-export const signUp = async (requestBody: AuthRequest, role: Role) => {
-    const response = await httpInstance.post<AuthResponse>(`/auth/${role.toLocaleLowerCase()}`, requestBody);
-    return response.data;
+export const signUp = async (credentials: SignUpRequest, role: Role) => {
+    const auth = getAuth();
+    const response = await httpInstance.post<AuthResponse>(`/auth/${role.toLowerCase()}`, credentials);
+    const { token } = response.data;
+    await signInWithCustomToken(auth, token);
 }
 
-export const storeToken = async (token: string) => {
-    await setItemAsync('token', token, {
-        keychainAccessible: WHEN_UNLOCKED
-    });
-}
-
-export const getToken = async () => {
-    return await getItemAsync('token');
-}
-
-export const setRole = async (role: Role) => {
-    await setItemAsync('role', role, {
-        keychainAccessible: WHEN_UNLOCKED
-    });
-}
-
-export const getRole = async () => {
-    return await getItemAsync('role');
+export const signIn = async (credentials: LoginRequest) => {
+    const auth = getAuth();
+    await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
 }
 
 export const signOut = async () => {
-    
+    const auth = getAuth();
+    await auth.signOut();
 }

@@ -21,7 +21,8 @@ export default {
         "googleMaps": {
           "apiKey": process.env.GOOGLE_MAPS_API_KEY
         }
-      }
+      }, 
+      usesCleartextTraffic: true
     },
     "web": {
       "bundler": "metro",
@@ -45,13 +46,6 @@ export default {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ],
-      [
-        "expo-secure-store",
-        {
-          "configureAndroidBackup": true,
-          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
-        }
-      ]
     ],
     "experiments": {
       "typedRoutes": true
@@ -66,6 +60,12 @@ export default {
       "here": {
         "apiKey": process.env.HERE_API_KEY,
         "autosuggestUrl": "https://autosuggest.search.hereapi.com/v1/autosuggest"
+      },
+      // {@link https://firebase.google.com/docs/web/setup#config-object | Learn about the Firebase config object}.
+      firebase: {
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+        apiKey: process.env.FIREBASE_API_KEY,
       }
     }
   }

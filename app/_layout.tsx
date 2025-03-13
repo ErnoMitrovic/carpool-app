@@ -1,10 +1,9 @@
 import { darkTheme, lightTheme } from "@/components/ui/CarpoolTheme";
-import { SignUp } from "@/screens/SignUp";
-import { AuthProvider, useAuth } from "@/store/AuthContext";
+import { AuthProvider } from "@/store/AuthContext";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
+import { Slot, SplashScreen } from "expo-router";
 import { useEffect } from "react";
-import { useColorScheme } from "react-native";
+import { Text, useColorScheme } from "react-native";
 import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -26,9 +25,7 @@ const RootLayout = () => {
     <SafeAreaProvider>
       <PaperProvider theme={colorScheme === 'dark' ? darkTheme : lightTheme}>
         <AuthProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
+          <Slot />
         </AuthProvider>
       </PaperProvider>
     </SafeAreaProvider>);

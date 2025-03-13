@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { Button, HelperText, SegmentedButtons, Text, TextInput, useTheme } from 'react-native-paper'
 import { Role, signUp, SignUpRequest } from '@/services/auth';
@@ -6,6 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { StatusBar } from 'expo-status-bar';
 import IconSymbol from '@/components/ui/IconSymbol';
 import { PhoneInput } from '@/components/PhoneInput';
+import { Link, useRouter } from 'expo-router';
 
 type SignUpData = {
     name: string;
@@ -19,6 +20,7 @@ type SignUpData = {
 
 const SignUp = () => {
     const theme = useTheme();
+    const router = useRouter();
 
     const REGEX = {
         password: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=!]).{6,}$/
@@ -37,6 +39,11 @@ const SignUp = () => {
         watch } = useForm<SignUpData>({
             mode: 'onChange',
             defaultValues: {
+                name: '',
+                email: '',
+                phone: '',
+                password: '',
+                confirmPassword: '',
                 role: Role.USER
             }
         });
@@ -51,6 +58,7 @@ const SignUp = () => {
             password,
             universityId: 1
         }, role)
+        router.replace('/(auth)/login');
     }
 
     return (
@@ -173,7 +181,10 @@ const SignUp = () => {
                     </>
                 )}
             />
-            <Text>Already have an account? <Text style={{ color: theme.colors.primary }}>Sign In</Text></Text>
+            <View style={styles.signUpContainer}>
+                <Text>Already have an account?</Text>
+                <Link href='/(auth)/login' style={[styles.signUpText, { color: theme.colors.primary }]}>Sign in</Link>
+            </View>
             <Button
                 mode='contained'
                 onPress={handleSubmit(submit)}
@@ -194,5 +205,15 @@ const styles = StyleSheet.create({
     },
     title: {
         marginBottom: 16
-    }
+    },
+    signUpContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginBottom: 16
+    },
+    signUpText: {
+        fontWeight: 'bold',
+        marginLeft: 4,
+        textDecorationLine: 'underline'
+    },
 })

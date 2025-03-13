@@ -7,6 +7,7 @@ interface AuthContextProps {
     role?: Role;
     setRole: (role: Role | undefined) => void;
     isSignedIn: boolean;
+    isLoaded: boolean;
 }
 
 const AuthContext = React.createContext<AuthContextProps | undefined>(undefined);
@@ -22,6 +23,7 @@ const useAuth = () => {
 const AuthProvider = (props: { children: React.ReactNode }): React.ReactElement => {
     const [role, setRole] = React.useState<Role>();
     const [isSignedIn, setIsSignedIn] = React.useState(false);
+    const [isLoaded, setIsLoaded] = React.useState(false);
 
     const handleUserChange = async (user: User | null) => {
         if (user) {
@@ -33,6 +35,7 @@ const AuthProvider = (props: { children: React.ReactNode }): React.ReactElement 
             setRole(undefined);
             setIsSignedIn(false);
         }
+        setIsLoaded(true);
     }
 
     React.useEffect(() => {
@@ -40,7 +43,7 @@ const AuthProvider = (props: { children: React.ReactNode }): React.ReactElement 
         return () => unsubscribe();
     }, []);
 
-    return <AuthContext.Provider {...props} value={{ role, setRole, isSignedIn }} />
+    return <AuthContext.Provider {...props} value={{ role, setRole, isSignedIn, isLoaded }} />
 }
 
 export { AuthProvider, useAuth };

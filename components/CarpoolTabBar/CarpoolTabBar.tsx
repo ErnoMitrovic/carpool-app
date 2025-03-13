@@ -1,4 +1,3 @@
-import { StyleSheet, Text, View } from 'react-native'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { BottomNavigation } from 'react-native-paper';
 import { FC } from 'react';
@@ -48,5 +47,3 @@ const CarpoolTabBar: FC<BottomTabBarProps> = ({ state, navigation, descriptors, 
 }
 
 export default CarpoolTabBar
-
-const styles = StyleSheet.create({})

@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import React from 'react'
 import { Button, HelperText, Text, TextInput, useTheme } from 'react-native-paper'
 import { Controller, useForm } from 'react-hook-form';
@@ -19,7 +19,7 @@ const SignIn = () => {
 
     const onSubmit = async (data: LoginRequest) => {
         await signIn(data);
-        router.replace('/');
+        router.replace('/(app)/index');
     }
 
     return (

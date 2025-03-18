@@ -1,14 +1,17 @@
 import { FlatList, StyleSheet, View } from 'react-native'
-import React, { FC, useState } from 'react'
+import React from 'react'
 import { SearchBarProps } from './types'
-import { getSuggestions } from '@/services/autocomplete'
-import { LocationItem } from '@/services/autocomplete'
 import IconSymbol from '../ui/IconSymbol'
-import { Divider, List, Surface, TextInput, useTheme } from 'react-native-paper'
+import { Divider, Surface, TextInput, useTheme } from 'react-native-paper'
 
-const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentPosition }) => {
-    const [suggestions, setSuggestions] = useState<LocationItem[]>([]);
-    const [query, setQuery] = useState("");
+const SearchBar = <T extends { id: string; title: string }>({
+    placeholder,
+    onSelect,
+    onFetchSuggestions,
+    renderItem
+}: SearchBarProps<T>) => {
+    const [suggestions, setSuggestions] = React.useState<T[]>([]);
+    const [query, setQuery] = React.useState("");
     const theme = useTheme();
 
     const onPressedClear = () => {
@@ -16,12 +19,12 @@ const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentP
         setSuggestions([]);
     }
 
-    const fetchSuggestions = async (text: string, currentPosition: string) => {
+    const fetchSuggestions = async (text: string) => {
         if (text.length < 3) {
             setSuggestions([]);
         }
         else {
-            const items = await getSuggestions(text, currentPosition);
+            const items = await onFetchSuggestions(text);
             setSuggestions(items);
         }
     }
@@ -37,8 +40,7 @@ const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentP
                 placeholderTextColor={theme.colors.onSurface}
                 onChangeText={(text) => {
                     setQuery(text);
-                    const currentPositionStr = `${currentPosition?.latitude},${currentPosition?.longitude}`;
-                    fetchSuggestions(text, currentPositionStr);
+                    fetchSuggestions(text);
                 }}
                 right={<TextInput.Icon icon={({ size, color }) => query && (
                     <IconSymbol name="xmark" size={size} color={color} onPress={onPressedClear} />
@@ -48,19 +50,11 @@ const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentP
                 (<FlatList
                     data={suggestions}
                     keyExtractor={item => item.id}
-                    renderItem={({ item }) => (
-                        <List.Item title={item.title}
-                            id={item.id}
-                            left={props => <List.Icon {...props} icon={({ color, size }) => (
-                                <IconSymbol name="location" size={size} color={color} />
-                            )} />}
-                            onPress={() => {
-                                setQuery(item.title);
-                                setSuggestions([]);
-                                onLocationSelect(item.position);
-                            }}
-                        />
-                    )}
+                    renderItem={({ item }) => renderItem(item, (selectedItem) => {
+                        setQuery(selectedItem.title);
+                        setSuggestions([]);
+                        onSelect(selectedItem);
+                    })}
                     ItemSeparatorComponent={() => <Divider />}
                 />)}
         </Surface>

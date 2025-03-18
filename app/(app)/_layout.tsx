@@ -1,12 +1,13 @@
-import { Platform, Text } from 'react-native'
+import { Platform, StyleSheet, Text } from 'react-native'
 import React from 'react'
 import { useAuth } from '@/store/AuthContext'
 import { Redirect } from 'expo-router';
 import { CarpoolTabBar } from '@/components/CarpoolTabBar';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import RideScreen from './route';
+import RideScreen from '.';
 import ProfileScreen from './profile';
 import IconSymbol from '@/components/ui/IconSymbol';
+import { ActivityIndicator } from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,7 +15,7 @@ const AppLayout = () => {
 
     const { isLoaded, isSignedIn } = useAuth();
     if (!isLoaded) {
-        return <Text>Loading...</Text>
+        return <ActivityIndicator size="large" style={styles.container} />
     }
     if (!isSignedIn) {
         return <Redirect href='/(auth)/login' />
@@ -47,3 +48,11 @@ const AppLayout = () => {
 }
 
 export default AppLayout
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+})

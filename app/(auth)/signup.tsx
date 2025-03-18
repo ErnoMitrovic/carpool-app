@@ -58,7 +58,7 @@ const SignUp = () => {
             password,
             universityId: 1
         }, role)
-        router.replace('/(auth)/login');
+        router.replace('/(app)/index');
     }
 
     return (

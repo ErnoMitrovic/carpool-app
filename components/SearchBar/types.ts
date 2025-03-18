@@ -1,7 +1,6 @@
-import { Position } from "@/services/autocomplete";
-
-export interface SearchBarProps {
+export interface SearchBarProps<T> {
     placeholder: string;
-    onLocationSelect: (locaiton: Position) => void;
-    currentPosition?: { latitude: number; longitude: number };
+    onSelect: (item: T) => void;
+    onFetchSuggestions: (query: string) => Promise<T[]>;
+    renderItem: (item: T, onSelect: (item: T) => void) => React.JSX.Element;
 }

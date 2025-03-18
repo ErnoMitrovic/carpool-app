@@ -5,13 +5,29 @@ import { StatusBar } from 'expo-status-bar'
 import { MapMarkerProps, Region } from 'react-native-maps'
 import { getCurrentPositionAsync, LocationObject, useForegroundPermissions } from 'expo-location'
 import { SearchBar } from '@/components/SearchBar'
-import { Position } from '@/services/autocomplete'
+import { LocationItem, Position } from '@/services/autocomplete'
 import { TimePicker } from '@/components/TimePicker'
 import { Button, Surface } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { getRides } from '@/services/ride'
+import { useForm } from 'react-hook-form'
+
+type RideSearch = {
+  startPosition: Position;
+  endPosition: Position;
+  departureDateTime: Date;
+}
 
 const RideScreen = () => {
   const insets = useSafeAreaInsets();
+
+  const { control, handleSubmit, formState: { isValid, errors } } = useForm<RideSearch>({
+    defaultValues: {
+      startPosition: { lat: 0, lng: 0 },
+      endPosition: { lat: 0, lng: 0 },
+      departureDateTime: new Date(),
+    }
+  })
 
   const [markers, setMarkers] = useState<MapMarkerProps[]>([]);
   const [initialRegion, setInitialRegion] = useState<Region>();
@@ -19,12 +35,13 @@ const RideScreen = () => {
   const [status, setStatus] = useForegroundPermissions();
   const [currentLocation, setCurrentLocation] = useState<LocationObject>();
 
-  const [startLocation, setStartLocation] = useState<Position>();
-  const [endLocation, setEndLocation] = useState<Position>();
+  const [startLocation, setStartLocation] = useState<LocationItem>();
+  const [endLocation, setEndLocation] = useState<LocationItem>();
 
   const [dateTime, setDateTime] = useState<Date>(new Date());
 
-  const onStartLocationSelect = (pos: Position) => {
+  const onStartLocationSelect = (loc: LocationItem) => {
+    const pos = loc.position;
     setMarkers((prevMarkers) => [
       ...prevMarkers,
       {
@@ -35,10 +52,11 @@ const RideScreen = () => {
       },
     ]);
     setCurrentRegion({ latitude: pos.lat, longitude: pos.lng, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
-    setStartLocation(pos);
+    setStartLocation(loc);
   }
 
-  const onEndLocationSelect = (pos: Position) => {
+  const onEndLocationSelect = (loc: LocationItem) => {
+    const pos = loc.position;
     setMarkers((prevMarkers) => [
       ...prevMarkers,
       {
@@ -49,7 +67,20 @@ const RideScreen = () => {
       },
     ]);
     setCurrentRegion({ latitude: pos.lat, longitude: pos.lng, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
-    setEndLocation(pos);
+    setEndLocation(loc);
+  }
+
+  const handleSearch = async () => {
+    if (startLocation && endLocation) {
+      const data = await getRides({
+        userLat: startLocation.position.lat,
+        userLng: startLocation.position.lng,
+        destLat: endLocation.position.lat,
+        destLng: endLocation.position.lng,
+        departureDateTime: dateTime.toISOString(),
+      })
+      console.log(data);
+    }
   }
 
   useEffect(() => {
@@ -72,17 +103,11 @@ const RideScreen = () => {
   return initialRegion ? (
     <>
       <Surface style={[styles.searchContainer, { paddingTop: insets.top + 4 }]}>
-        <SearchBar placeholder="Start location" onLocationSelect={onStartLocationSelect}
-          currentPosition={currentLocation?.coords}
-        />
-        <SearchBar placeholder="End location" onLocationSelect={onEndLocationSelect}
-          currentPosition={currentLocation?.coords}
-        />
         <TimePicker value={dateTime} onChange={(event, selectedDate) => {
           if (event.type === 'set')
             setDateTime(selectedDate ?? dateTime);
         }} />
-        <Button mode='contained' onPress={() => console.log('Ride request sent')}>Request ride</Button>
+        <Button mode='contained' onPress={handleSearch}>Request ride</Button>
       </Surface>
       <CarpoolMap initialRegion={initialRegion} markers={markers} currentRegion={currentRegion} />
       <StatusBar hidden={true} />

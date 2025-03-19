@@ -9,7 +9,8 @@ export default {
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "de.htwsaar.carpool"
     },
     "android": {
       "adaptiveIcon": {

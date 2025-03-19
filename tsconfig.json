@@ -6,7 +6,8 @@
       "@/*": [
         "./*"
       ], 
-      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
+      "expo-symbols": ["./node_modules/expo-symbols/build/index.d.ts"]
     }
   },
   "include": [

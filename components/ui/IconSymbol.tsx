@@ -12,6 +12,7 @@ const MAPPING = {
     'chevron.left.forwardslash.chevron.right': 'code',
     'chevron.right': 'chevron-right',
     'car.fill': 'directions-car',
+    'message.fill': 'chat',
     'magnifyingglass': 'search',
     'xmark': 'close',
     'location': 'location-on',

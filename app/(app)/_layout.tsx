@@ -6,6 +6,7 @@ import { CarpoolTabBar } from '@/components/CarpoolTabBar';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import RideScreen from './route';
 import ProfileScreen from './profile';
+import ChatScreen from './chat';
 import IconSymbol from '@/components/ui/IconSymbol';
 
 const Tab = createBottomTabNavigator();
@@ -35,6 +36,12 @@ const AppLayout = () => {
             options={{
                 tabBarLabel: 'Ride',
                 tabBarIcon: ({ color, size }) => <IconSymbol size={size} name="car.fill" color={color} />
+            }} />
+        <Tab.Screen
+            name="Chat" component={ChatScreen}
+            options={{
+                tabBarLabel: 'Chat',
+                tabBarIcon: ({ color, size }) => <IconSymbol size={size} name="message.fill" color={color} />
             }} />
         <Tab.Screen
             name='Profile' component={ProfileScreen}

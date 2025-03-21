@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native'
+import { StyleSheet, View, ScrollView, Dimensions } from 'react-native'
 import React from 'react'
-import { Button, Card, Divider, Surface, Title, useTheme } from 'react-native-paper'
+import { Button, Text, Card, Divider, Surface, Title, useTheme } from 'react-native-paper'
 import { signOut } from '@/services/auth';
 import { useAuth } from '@/store/AuthContext';
 import EvilIcons from '@expo/vector-icons/EvilIcons';

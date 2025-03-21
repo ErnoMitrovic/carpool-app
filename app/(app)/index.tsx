@@ -1,40 +1,105 @@
-import { Platform, StyleSheet } from 'react-native'
-import React from 'react'
-import IconSymbol from '@/components/ui/IconSymbol';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import RideScreen from './route';
-import { CarpoolTabBar } from '@/components/CarpoolTabBar';
-import ProfileScreen from './profile';
+import { ActivityIndicator, StyleSheet, useColorScheme, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { CarpoolMap } from '@/components/CarpoolMap'
+import { StatusBar } from 'expo-status-bar'
+import { MapMarkerProps, Region } from 'react-native-maps'
+import { getCurrentPositionAsync, LocationObject, useForegroundPermissions } from 'expo-location'
+import { SearchBar } from '@/components/SearchBar'
+import { Position } from '@/services/autocomplete'
+import { TimePicker } from '@/components/TimePicker'
+import { Button, Surface } from 'react-native-paper'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const Tab = createBottomTabNavigator();
+const RideScreen = () => {
+  const insets = useSafeAreaInsets();
 
-const NavBar = () => {
-    return (
-        <Tab.Navigator screenOptions={{
-            tabBarStyle: Platform.select({
-                ios: {
-                    position: 'absolute',
-                },
-                default: {},
-            }),
-            headerShown: false,
-        }}
-            tabBar={CarpoolTabBar}>
-            <Tab.Screen
-                name="Ride" component={RideScreen}
-                options={{
-                    tabBarLabel: 'Ride',
-                    tabBarIcon: ({ color, size }) => <IconSymbol size={size} name="car.fill" color={color} />
-                }} />
-            <Tab.Screen
-                name='Profile' component={ProfileScreen}
-                options={{
-                    tabBarLabel: 'Profile',
-                    tabBarIcon: ({ color, size }) => <IconSymbol size={size} name="person.fill" color={color} />
-                }} />
+  const [markers, setMarkers] = useState<MapMarkerProps[]>([]);
+  const [initialRegion, setInitialRegion] = useState<Region>();
+  const [currentRegion, setCurrentRegion] = useState<Region>();
+  const [status, setStatus] = useForegroundPermissions();
+  const [currentLocation, setCurrentLocation] = useState<LocationObject>();
 
-        </Tab.Navigator>
-    )
+  const [startLocation, setStartLocation] = useState<Position>();
+  const [endLocation, setEndLocation] = useState<Position>();
+
+  const [dateTime, setDateTime] = useState<Date>(new Date());
+
+  const onStartLocationSelect = (pos: Position) => {
+    setMarkers((prevMarkers) => [
+      ...prevMarkers,
+      {
+        coordinate: {
+          latitude: pos.lat,
+          longitude: pos.lng,
+        },
+      },
+    ]);
+    setCurrentRegion({ latitude: pos.lat, longitude: pos.lng, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
+    setStartLocation(pos);
+  }
+
+  const onEndLocationSelect = (pos: Position) => {
+    setMarkers((prevMarkers) => [
+      ...prevMarkers,
+      {
+        coordinate: {
+          latitude: pos.lat,
+          longitude: pos.lng,
+        },
+      },
+    ]);
+    setCurrentRegion({ latitude: pos.lat, longitude: pos.lng, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
+    setEndLocation(pos);
+  }
+
+  useEffect(() => {
+    if (status?.granted) {
+      getCurrentPositionAsync().then((location) => {
+        setInitialRegion({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421
+        });
+        setCurrentLocation(location);
+        setCurrentRegion(initialRegion);
+      });
+    } else {
+      setStatus();
+    }
+  }, [status]);
+
+  return initialRegion ? (
+    <>
+      <Surface style={[styles.searchContainer, { paddingTop: insets.top + 4 }]}>
+        <SearchBar placeholder="Start location" onLocationSelect={onStartLocationSelect}
+          currentPosition={currentLocation?.coords}
+        />
+        <SearchBar placeholder="End location" onLocationSelect={onEndLocationSelect}
+          currentPosition={currentLocation?.coords}
+        />
+        <TimePicker value={dateTime} onChange={(event, selectedDate) => {
+          if (event.type === 'set')
+            setDateTime(selectedDate ?? dateTime);
+        }} />
+        <Button mode='contained' onPress={() => console.log('Ride request sent')}>Request ride</Button>
+      </Surface>
+      <CarpoolMap initialRegion={initialRegion} markers={markers} currentRegion={currentRegion} />
+      <StatusBar hidden={true} />
+    </>
+  ) : <ActivityIndicator size="large" style={styles.container} />
 }
 
-export default NavBar
+export default RideScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchContainer: {
+    padding: 10,
+    gap: 10,
+  },
+})

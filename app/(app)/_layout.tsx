@@ -4,7 +4,7 @@ import { useAuth } from '@/store/AuthContext'
 import { Redirect } from 'expo-router';
 import { CarpoolTabBar } from '@/components/CarpoolTabBar';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import RideScreen from './route';
+import RideScreen from '.';
 import ProfileScreen from './profile';
 import ChatScreen from './chat';
 import IconSymbol from '@/components/ui/IconSymbol';

@@ -20,8 +20,8 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ phone, onChangePhone, onBlur })
         setModalVisible(false)
     }
 
-    const handlePhoneChange = (phone: string) => {
-        onChangePhone(phone)
+    const handlePhoneChange = (inputPhoneNumber: string) => {
+        onChangePhone(country.dialCode+inputPhoneNumber)
     }
 
     return (

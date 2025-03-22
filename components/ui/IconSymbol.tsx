@@ -17,6 +17,7 @@ const MAPPING = {
     'xmark': 'close',
     'location': 'location-on',
     'person.fill': 'person',
+    'list.dash': 'format-list-bulleted',
 } as Partial<
     Record<
         import('expo-symbols').SymbolViewProps['name'],

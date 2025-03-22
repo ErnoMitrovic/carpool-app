@@ -6,9 +6,8 @@ import { LocationItem } from '@/services/autocomplete'
 import IconSymbol from '../ui/IconSymbol'
 import { Divider, List, Surface, TextInput, useTheme } from 'react-native-paper'
 
-const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentPosition }) => {
+const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentPosition, query, setQuery }) => {
     const [suggestions, setSuggestions] = useState<LocationItem[]>([]);
-    const [query, setQuery] = useState("");
     const theme = useTheme();
 
     const onPressedClear = () => {
@@ -57,7 +56,14 @@ const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentP
                             onPress={() => {
                                 setQuery(item.title);
                                 setSuggestions([]);
-                                onLocationSelect(item.position);
+                                onLocationSelect({
+                                    position: {
+                                        x: item.position.lng,
+                                        y: item.position.lat
+                                    },
+                                    name: item.title,
+                                    address: item.address.label
+                                });
                             }}
                         />
                     )}

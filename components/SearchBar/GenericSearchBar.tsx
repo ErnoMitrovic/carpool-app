@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const RidesDriver = () => {
+const GenericSearchBar = () => {
   return (
     <View>
-      <Text>RidesDriver</Text>
+      <Text>SearchBarGeneric</Text>
     </View>
   )
 }
 
-export default RidesDriver
+export default GenericSearchBar
 
 const styles = StyleSheet.create({})

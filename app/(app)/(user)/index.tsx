@@ -9,6 +9,7 @@ import { Position } from '@/services/autocomplete'
 import { TimePicker } from '@/components/TimePicker'
 import { Button, Surface } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { LocationPojo } from '@/services/ride'
 
 const RideScreen = () => {
   const insets = useSafeAreaInsets();
@@ -19,37 +20,37 @@ const RideScreen = () => {
   const [status, setStatus] = useForegroundPermissions();
   const [currentLocation, setCurrentLocation] = useState<LocationObject>();
 
-  const [startLocation, setStartLocation] = useState<Position>();
-  const [endLocation, setEndLocation] = useState<Position>();
+  const [startLocation, setStartLocation] = useState<LocationPojo>();
+  const [endLocation, setEndLocation] = useState<LocationPojo>();
 
   const [dateTime, setDateTime] = useState<Date>(new Date());
 
-  const onStartLocationSelect = (pos: Position) => {
+  const onStartLocationSelect = (loc: LocationPojo) => {
     setMarkers((prevMarkers) => [
       ...prevMarkers,
       {
         coordinate: {
-          latitude: pos.lat,
-          longitude: pos.lng,
+          latitude: loc.position.y,
+          longitude: loc.position.x,
         },
       },
     ]);
-    setCurrentRegion({ latitude: pos.lat, longitude: pos.lng, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
-    setStartLocation(pos);
+    setCurrentRegion({ latitude: loc.position.y, longitude: loc.position.x, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
+    setStartLocation(loc);
   }
 
-  const onEndLocationSelect = (pos: Position) => {
+  const onEndLocationSelect = (loc: LocationPojo) => {
     setMarkers((prevMarkers) => [
       ...prevMarkers,
       {
         coordinate: {
-          latitude: pos.lat,
-          longitude: pos.lng,
+          latitude: loc.position.y,
+          longitude: loc.position.x,
         },
       },
     ]);
-    setCurrentRegion({ latitude: pos.lat, longitude: pos.lng, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
-    setEndLocation(pos);
+    setCurrentRegion({ latitude: loc.position.y, longitude: loc.position.x, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
+    setEndLocation(loc);
   }
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { Text } from 'react-native'
 import React from 'react'
 import { useAuth } from '@/store/AuthContext'
 import { Redirect } from 'expo-router'
@@ -16,7 +16,7 @@ const App = () => {
     }
 
     if (role === Role.DRIVER) {
-        return <Redirect href="/create" />
+        return <Redirect href="/my-rides" />
     }
 
     if (role === Role.USER) {

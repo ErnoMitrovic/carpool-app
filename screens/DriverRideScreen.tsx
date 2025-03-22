@@ -1,32 +1,57 @@
-import { StyleSheet, View } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import React from 'react'
 import { ActivityIndicator, Button, HelperText, Snackbar, Surface, Text, TextInput } from 'react-native-paper'
 import { Controller, useForm } from 'react-hook-form'
 import { MapMarkerProps } from 'react-native-maps'
-import { createRide, CreateRideRequest, LocationPojo } from '@/services/ride'
+import { RideRequest, LocationPojo } from '@/services/ride'
 import { TimePicker } from '@/components/TimePicker'
 import { SearchBar } from '@/components/SearchBar'
 import { CarpoolMap } from '@/components/CarpoolMap'
 import { useLocation } from '@/store/LocationContext'
 import { StatusBar } from 'expo-status-bar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useRouter } from 'expo-router'
 
-const MapViewDriver = () => {
+export interface DriverRideScreenProps {
+    defaultValues?: RideRequest
+    onSubmit: (data: RideRequest) => Promise<void>
+    onDismiss?: () => void
+    submitText: string
+}
+
+const DriverRideScreen: React.FC<DriverRideScreenProps> = ({
+    defaultValues = {
+        departureDatetime: new Date(),
+        availableSeats: 1,
+        costPerSeat: 0,
+        startLocation: {
+            address: '',
+            name: '',
+            position: {
+                x: 0,
+                y: 0
+            }
+        },
+        endLocation: {
+            address: '',
+            name: '',
+            position: {
+                x: 0,
+                y: 0
+            }
+        },
+        rideDescription: ''
+    },
+    onSubmit,
+    onDismiss,
+    submitText
+}) => {
     const {
         control,
         handleSubmit,
         formState: { errors, isValid }
-    } = useForm<CreateRideRequest>(
+    } = useForm<RideRequest>(
         {
-            defaultValues: {
-                departureDatetime: new Date(),
-                availableSeats: 1,
-                costPerSeat: 0,
-                startLocation: { x: 0, y: 0 },
-                endLocation: { x: 0, y: 0 },
-                rideDescription: ''
-            }
+            defaultValues
         }
     );
 
@@ -34,16 +59,15 @@ const MapViewDriver = () => {
     const [snackbarVisible, setSnackbarVisible] = React.useState(false);
     const { location } = useLocation();
     const { top } = useSafeAreaInsets();
-    const router = useRouter();
 
-    const onSubmit = async (data: CreateRideRequest) => {
-        await createRide(data);
+    const onSubmitForm = async (data: RideRequest) => {
+        await onSubmit(data);
         setSnackbarVisible(true);
     }
 
     const onDismissSnackBar = () => {
         setSnackbarVisible(false);
-        router.replace('/')
+        onDismiss && onDismiss();
     }
 
     if (!location) {
@@ -58,26 +82,26 @@ const MapViewDriver = () => {
                     name='startLocation'
                     control={control}
                     rules={{ required: 'This field is required' }}
-                    render={({ field: { onChange } }) => (
+                    render={({ field: { onChange, value } }) => (
                         <>
-                            <SearchBar currentPosition={{
-                                latitude: location?.y,
-                                longitude: location?.x
-                            }} placeholder='Start location' onLocationSelect={location => {
-                                setMarkers((prevMarkers) => [
-                                    ...prevMarkers,
-                                    {
-                                        coordinate: {
-                                            latitude: location.lat,
-                                            longitude: location.lng
+                            <SearchBar
+                                query={value.name}
+                                setQuery={onChange}
+                                currentPosition={{
+                                    latitude: location?.y,
+                                    longitude: location?.x
+                                }} placeholder='Start location' onLocationSelect={loc => {
+                                    setMarkers((prevMarkers) => [
+                                        ...prevMarkers,
+                                        {
+                                            coordinate: {
+                                                latitude: loc.position.y,
+                                                longitude: loc.position.x
+                                            }
                                         }
-                                    }
-                                ]);
-                                onChange({
-                                    y: location.lat,
-                                    x: location.lng
-                                } as LocationPojo)
-                            }} />
+                                    ]);
+                                    onChange(location)
+                                }} />
                             <HelperText type='error'>{errors.startLocation?.message}</HelperText>
                         </>
                     )}
@@ -86,26 +110,26 @@ const MapViewDriver = () => {
                     name='endLocation'
                     control={control}
                     rules={{ required: 'This field is required' }}
-                    render={({ field: { onChange } }) => (
+                    render={({ field: { value, onChange } }) => (
                         <>
-                            <SearchBar currentPosition={{
-                                latitude: location?.y,
-                                longitude: location?.x
-                            }} placeholder='End location' onLocationSelect={location => {
-                                setMarkers((prevMarkers) => [
-                                    ...prevMarkers,
-                                    {
-                                        coordinate: {
-                                            latitude: location.lat,
-                                            longitude: location.lng
+                            <SearchBar
+                                query={value.name}
+                                setQuery={onChange}
+                                currentPosition={{
+                                    latitude: location?.y,
+                                    longitude: location?.x
+                                }} placeholder='End location' onLocationSelect={loc => {
+                                    setMarkers((prevMarkers) => [
+                                        ...prevMarkers,
+                                        {
+                                            coordinate: {
+                                                latitude: loc.position.y,
+                                                longitude: loc.position.x
+                                            }
                                         }
-                                    }
-                                ]);
-                                onChange({
-                                    y: location.lat,
-                                    x: location.lng
-                                } as LocationPojo)
-                            }} />
+                                    ]);
+                                    onChange(loc)
+                                }} />
                             <HelperText type='error'>{errors.endLocation?.message}</HelperText>
                         </>
                     )}
@@ -184,7 +208,7 @@ const MapViewDriver = () => {
                         </>
                     )}
                 />
-                <Button mode='contained' disabled={!isValid} onPress={handleSubmit(onSubmit)}>Create ride</Button>
+                <Button mode='contained' disabled={!isValid} onPress={handleSubmit(onSubmitForm)}>{submitText}</Button>
             </Surface>
 
             <CarpoolMap markers={markers} initialRegion={{
@@ -205,7 +229,7 @@ const MapViewDriver = () => {
     )
 }
 
-export default MapViewDriver
+export default DriverRideScreen
 
 const styles = StyleSheet.create({
     container: {

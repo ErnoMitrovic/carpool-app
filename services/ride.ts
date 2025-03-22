@@ -1,11 +1,17 @@
 import httpInstance from "./httpInstance"
 
-export interface LocationPojo {
+export interface PositionPojo {
     x: number;
     y: number;
 }
 
-export interface CreateRideRequest {
+export interface LocationPojo {
+    position: PositionPojo;
+    name: string;
+    address: string;
+}
+
+export interface RideRequest {
     departureDatetime: Date;
     availableSeats: number;
     costPerSeat: number;
@@ -16,25 +22,37 @@ export interface CreateRideRequest {
 
 export interface RideResponse {
     id: number;
-    departureTime: string;
+    departureDatetime: string;
     startLocation: LocationPojo;
     endLocation: LocationPojo;
     seats: number;
     price: number;
+    status: string;
+    description: string;
 }
 
-export const getMyRides = async (userId: string, page: number, limit: number) => {
-    const response = await httpInstance.get<RideResponse[]>(`/ride/${userId}`, {
+export const getMyRides = async (userId: string, page: number, limit: number, sort?: string) => {
+    const response = await httpInstance.get<RideResponse[]>(`/ride/driver/${userId}`, {
         params: {
-            page, limit
+            page, limit, sort
         }
     });
 
     return response.data;
 }
 
-export const createRide = async (ride: CreateRideRequest) => {
+
+export const createRide = async (ride: RideRequest) => {
     const response = await httpInstance.post<RideResponse>('/ride', ride);
 
     return response.data;
+}
+
+export const getRide = async (rideId: string) => {
+    const response = await httpInstance.get<RideResponse>(`/ride/${rideId}`);
+    return response.data;
+}
+
+export const updateRide = async (rideId: string, ride: RideRequest) => {
+    await httpInstance.put(`/ride/${rideId}`, ride);
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Tabs } from 'expo-router'
 import { useTheme } from 'react-native-paper'
-import IconSymbol from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons'
 
 const DriverLayout = () => {
     const theme = useTheme();
@@ -9,21 +9,16 @@ const DriverLayout = () => {
     return <Tabs screenOptions={{
         tabBarActiveTintColor: theme.colors.primary,
         tabBarStyle: { backgroundColor: theme.colors.surface },
-        headerShown: false
-    }} initialRouteName='rides'>
-        <Tabs.Screen name='create' options={{
-            title: 'Ride', tabBarIcon: ({ color, size }) => (
-                <IconSymbol name='car.fill' size={size} color={color} />
-            )
-        }} />
-        <Tabs.Screen name='rides' options={{
+        headerShown: false,
+    }} initialRouteName='my-rides'>
+        <Tabs.Screen name='my-rides' options={{
             title: 'Rides', tabBarIcon: ({ color, size }) => (
-                <IconSymbol name='list.dash' size={size} color={color} />
+                <Ionicons name='car' size={size} color={color} />
             )
         }} />
         <Tabs.Screen name='profile' options={{ 
             title: 'Profile', tabBarIcon: ({ color, size }) => (
-                <IconSymbol name='person.fill' size={size} color={color} />
+                <Ionicons name='person' size={size} color={color} />
             )
         }} />
     </Tabs>

@@ -1,16 +1,16 @@
-import { LocationPojo } from "@/services/ride";
+import { LocationPojo, PositionPojo } from "@/services/ride";
 import { getCurrentPositionAsync, useForegroundPermissions } from "expo-location";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface LocationContextType {
-    location: LocationPojo | null;
+    location: PositionPojo | null;
     updateLocation: () => void;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
 export const LocationProvider = ({ children }: { children: React.ReactNode }) => {
-    const [location, setLocation] = useState<LocationPojo | null>(null);
+    const [location, setLocation] = useState<PositionPojo | null>(null);
     const [status, setStatus] = useForegroundPermissions();
 
     const updateLocation = async () => {

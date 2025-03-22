@@ -56,3 +56,7 @@ export const getRide = async (rideId: string) => {
 export const updateRide = async (rideId: string, ride: RideRequest) => {
     await httpInstance.put(`/ride/${rideId}`, ride);
 }
+
+export const cancelRide = async (rideId: string) => {
+    await httpInstance.delete(`/ride/${rideId}`);
+}

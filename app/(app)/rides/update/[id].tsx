@@ -1,8 +1,9 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { getRide, RideRequest, RideResponse, updateRide } from '@/services/ride';
 import DriverRideScreen from '@/screens/DriverRideScreen';
+import { StyleSheet } from 'react-native';
+import AppActivityIndicator from '@/components/AppActivityIndicator/AppActivityIndicator';
 
 const UpdateRideView = () => {
     const router = useRouter();
@@ -36,10 +37,16 @@ const UpdateRideView = () => {
     }
 
     if(!ride) {
-        return <View><Text>Loading...</Text></View>
+        return <AppActivityIndicator />
     }
 
     return <DriverRideScreen defaultValues={ride} onSubmit={submitUpdate} submitText='Update' onDismiss={onDismiss} />
 }
 
 export default UpdateRideView
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    }
+})

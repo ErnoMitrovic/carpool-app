@@ -1,5 +1,5 @@
-import { LocationPojo, PositionPojo } from "@/services/ride";
-import { getCurrentPositionAsync, useForegroundPermissions } from "expo-location";
+import { PositionPojo } from "@/services/ride";
+import { getCurrentPositionAsync, getLastKnownPositionAsync, LocationObject, LocationOptions, useForegroundPermissions } from "expo-location";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface LocationContextType {

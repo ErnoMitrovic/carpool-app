@@ -55,12 +55,14 @@ const DriverRideScreen: React.FC<DriverRideScreenProps> = ({
         }
     );
 
-    const [markers, setMarkers] = React.useState<MapMarkerProps[]>([]);
+    const [startMarker, setStartMarker] = React.useState<MapMarkerProps | null>(null);
+    const [endMarker, setEndMarker] = React.useState<MapMarkerProps | null>(null);
     const [snackbarVisible, setSnackbarVisible] = React.useState(false);
     const { location } = useLocation();
     const { top } = useSafeAreaInsets();
 
     const onSubmitForm = async (data: RideRequest) => {
+        console.log(data);
         await onSubmit(data);
         setSnackbarVisible(true);
     }
@@ -91,16 +93,13 @@ const DriverRideScreen: React.FC<DriverRideScreenProps> = ({
                                     latitude: location?.y,
                                     longitude: location?.x
                                 }} placeholder='Start location' onLocationSelect={loc => {
-                                    setMarkers((prevMarkers) => [
-                                        ...prevMarkers,
-                                        {
-                                            coordinate: {
-                                                latitude: loc.position.y,
-                                                longitude: loc.position.x
-                                            }
+                                    setStartMarker({
+                                        coordinate: {
+                                            latitude: loc.position.y,
+                                            longitude: loc.position.x
                                         }
-                                    ]);
-                                    onChange(location)
+                                    });
+                                    onChange(loc)
                                 }} />
                             <HelperText type='error'>{errors.startLocation?.message}</HelperText>
                         </>
@@ -119,15 +118,12 @@ const DriverRideScreen: React.FC<DriverRideScreenProps> = ({
                                     latitude: location?.y,
                                     longitude: location?.x
                                 }} placeholder='End location' onLocationSelect={loc => {
-                                    setMarkers((prevMarkers) => [
-                                        ...prevMarkers,
-                                        {
-                                            coordinate: {
-                                                latitude: loc.position.y,
-                                                longitude: loc.position.x
-                                            }
+                                    setEndMarker({
+                                        coordinate: {
+                                            latitude: loc.position.y,
+                                            longitude: loc.position.x
                                         }
-                                    ]);
+                                    });
                                     onChange(loc)
                                 }} />
                             <HelperText type='error'>{errors.endLocation?.message}</HelperText>
@@ -211,12 +207,13 @@ const DriverRideScreen: React.FC<DriverRideScreenProps> = ({
                 <Button mode='contained' disabled={!isValid} onPress={handleSubmit(onSubmitForm)}>{submitText}</Button>
             </Surface>
 
-            <CarpoolMap markers={markers} initialRegion={{
-                latitude: location?.y,
-                longitude: location?.x,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421
-            }} />
+            <CarpoolMap markers={[startMarker, endMarker].filter(marker => marker !== null) as MapMarkerProps[]}
+                initialRegion={{
+                    latitude: location?.y,
+                    longitude: location?.x,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421
+                }} />
 
             <Snackbar
                 visible={snackbarVisible}

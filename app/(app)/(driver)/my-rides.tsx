@@ -1,27 +1,19 @@
 import React from 'react'
 import { useAuth } from '@/store/AuthContext';
-import { getMyRides, RideResponse } from '@/services/ride';
+import { cancelRide, getMyRides, RideResponse } from '@/services/ride';
 import { Button, Card, Dialog, Portal, SegmentedButtons, Text, useTheme } from 'react-native-paper';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-const toRideParams = (ride: RideResponse) => ({
-  id: ride.id,
-  startLocation: ride.startLocation,
-  endLocation: ride.endLocation,
-  departureDatetime: ride.departureDatetime,
-  seats: ride.seats,
-  status: ride.status
-})
 
 const RidesScreen = () => {
   const { user, isLoaded } = useAuth();
   const [rides, setRides] = React.useState<RideResponse[]>([]);
   const [filter, setFilter] = React.useState<'upcoming' | 'past'>('upcoming');
   const [cancelDialogVisible, setCancelDialogVisible] = React.useState(false);
-  const [rideToCancel, setRideToCancel] = React.useState<RideResponse | null>(null);
+  const [rideCancelId, setRideCancelId] = React.useState('');
   const theme = useTheme();
   const router = useRouter();
 
@@ -72,22 +64,26 @@ const RidesScreen = () => {
             </Card.Content>
             <Card.Actions>
               <Button onPress={() => router.push
-                ({ pathname: '/rides/[id]', params: { id: item.id } })
+                ({ pathname: '/rides/update/[id]', params: { id: item.id } })
               }>Edit</Button>
-              <Button onPress={() => setCancelDialogVisible(true)}>Cancel</Button>
-              <Button onPress={() => { }}>Booking</Button>
+              <Button onPress={() => {
+                setCancelDialogVisible(true)
+                setRideCancelId(item.id.toString())
+              }}>Cancel</Button>
+              <Button onPress={() => router.push(
+                { pathname: '/rides/booking/[id]', params: { id: item.id } }
+              )}>Booking</Button>
             </Card.Actions>
           </Card>
         )}
       />
 
-      {/* Add ride */}
       <View
         style={{ position: 'absolute', bottom: 16, right: 16 }}
       >
         <Button
           icon='plus'
-          onPress={_ => router.navigate('/rides/index')}
+          onPress={_ => router.navigate('/rides/create')}
         >
           Add Ride
         </Button>
@@ -101,7 +97,10 @@ const RidesScreen = () => {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setCancelDialogVisible(false)}>No</Button>
-            <Button onPress={() => { }}>Yes</Button>
+            <Button onPress={_ => {
+              cancelRide(rideCancelId)
+              setCancelDialogVisible(false)
+            }}>Yes</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

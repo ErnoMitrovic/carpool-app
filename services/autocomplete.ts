@@ -14,6 +14,9 @@ export type LocationItem = {
     title: string;
     position: Position;
     id: string;
+    address: {
+        label: string;
+    }
 }
 
 export type Position = {

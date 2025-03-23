@@ -4,11 +4,18 @@ import { Button, Text, Card, Divider, Surface, Title, useTheme } from 'react-nat
 import { signOut } from '@/services/auth';
 import { useAuth } from '@/store/AuthContext';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
+import { useRouter } from 'expo-router';
 
 const ProfileScreen = () => {
   const theme = useTheme();
   const { user } = useAuth();
   const windowHeight = Dimensions.get('window').height;
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.replace('/');
+  }
 
   return (
     <ScrollView 
@@ -47,7 +54,7 @@ const ProfileScreen = () => {
         <Button 
           mode="contained" 
           icon="logout" 
-          onPress={signOut}
+          onPress={handleSignOut}
           style={styles.logoutButton}
         >
           Sign Out

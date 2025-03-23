@@ -28,4 +28,15 @@ httpInstance.interceptors.request.use(async (config) => {
     return Promise.reject(error);
 });
 
+/**
+ * Default exception handler
+ */
+httpInstance.interceptors.response.use(
+    response => response,
+    error => {
+        console.error('Response error', error);
+        return Promise.reject(error);
+    }
+)
+
 export default httpInstance;

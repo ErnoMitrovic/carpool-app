@@ -1,7 +1,10 @@
 import { Position } from "@/services/autocomplete";
+import { LocationPojo } from "@/services/ride";
 
 export interface SearchBarProps {
     placeholder: string;
-    onLocationSelect: (locaiton: Position) => void;
-    currentPosition?: { latitude: number; longitude: number };
+    onLocationSelect: (location: LocationPojo) => void;
+    currentPosition: { latitude: number; longitude: number };
+    query: string;
+    setQuery: (query: string) => void;
 }

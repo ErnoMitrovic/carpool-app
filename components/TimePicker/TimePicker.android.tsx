@@ -2,15 +2,21 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { FC } from 'react'
 import { TimePickerProps } from './types'
 import { Button, useTheme } from 'react-native-paper'
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
+import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker'
 
 type AndroidMode = 'date' | 'time';
 
 const TimePicker: FC<TimePickerProps> = ({ value, onChange }) => {
+    const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        if (event.type === 'set' && selectedDate) {
+            onChange(selectedDate); 
+        }
+    };
+
     const showMode = (currentMode: AndroidMode) => {
         DateTimePickerAndroid.open({
             value,
-            onChange,
+            onChange: handleChange,
             mode: currentMode,
             is24Hour: true,
         })

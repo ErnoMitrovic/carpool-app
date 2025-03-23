@@ -1,6 +1,6 @@
 export default {
   "expo": {
-    "name": "carpool-app",
+    "name": "Shared Uni",
     "slug": "carpool-app",
     "version": "1.0.0",
     "orientation": "portrait",

@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View } from 'react-native'
+import { FlatList, Keyboard, StyleSheet, View } from 'react-native'
 import React, { FC, useState } from 'react'
 import { SearchBarProps } from './types'
 import { getSuggestions } from '@/services/autocomplete'
@@ -8,22 +8,33 @@ import { Divider, List, Surface, TextInput, useTheme } from 'react-native-paper'
 
 const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentPosition, query, setQuery }) => {
     const [suggestions, setSuggestions] = useState<LocationItem[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const theme = useTheme();
 
-    const onPressedClear = () => {
-        setQuery("");
-        setSuggestions([]);
-    }
+    const currentPositionStr = React.useMemo(
+        () => `${currentPosition?.latitude},${currentPosition?.longitude}`,
+        [currentPosition]
+    );
 
-    const fetchSuggestions = async (text: string, currentPosition: string) => {
+    const handleChangeText = async (text: string) => {
+        setQuery(text);
+
         if (text.length < 3) {
             setSuggestions([]);
+            return;
         }
-        else {
-            const items = await getSuggestions(text, currentPosition);
-            setSuggestions(items);
-        }
-    }
+
+        setIsLoading(true);
+
+        const items = await getSuggestions(text, currentPositionStr);
+        setSuggestions(items);
+        setIsLoading(false);
+    };
+
+    const onPressedClear = () => {
+        setQuery('');
+        setSuggestions([]);
+    };
 
     return (
         <Surface style={styles.container}>
@@ -34,26 +45,25 @@ const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentP
                 placeholder={placeholder}
                 value={query}
                 placeholderTextColor={theme.colors.onSurface}
-                onChangeText={(text) => {
-                    setQuery(text);
-                    const currentPositionStr = `${currentPosition?.latitude},${currentPosition?.longitude}`;
-                    fetchSuggestions(text, currentPositionStr);
-                }}
-                right={<TextInput.Icon icon={({ size, color }) => query && (
-                    <IconSymbol name="xmark" size={size} color={color} onPress={onPressedClear} />
-                )} />}
+                onChangeText={handleChangeText}
+                right={
+                    query
+                        ? <TextInput.Icon icon="close" onPress={onPressedClear} />
+                        : isLoading
+                            ? <TextInput.Icon icon="loading" />
+                            : null
+                }
             />
-            {suggestions.length > 0 &&
-                (<FlatList
+            {suggestions.length > 0 && (
+                <FlatList
                     data={suggestions}
                     keyExtractor={item => item.id}
+                    keyboardShouldPersistTaps="handled"
                     renderItem={({ item }) => (
-                        <List.Item title={item.title}
-                            id={item.id}
-                            left={props => <List.Icon {...props} icon={({ color, size }) => (
-                                <IconSymbol name="location" size={size} color={color} />
-                            )} />}
+                        <List.Item
+                            title={item.title}
                             onPress={() => {
+                                Keyboard.dismiss();
                                 setSuggestions([]);
                                 onLocationSelect({
                                     position: {
@@ -64,13 +74,20 @@ const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentP
                                     address: item.address.label
                                 });
                             }}
+                            left={props => (
+                                <List.Icon {...props} icon={({ color, size }) => (
+                                    <IconSymbol name="location" size={size} color={color} />
+                                )} />
+                            )}
                         />
                     )}
                     ItemSeparatorComponent={() => <Divider />}
-                />)}
+                />
+            )}
         </Surface>
-    )
-}
+    );
+};
+
 
 export default SearchBar
 

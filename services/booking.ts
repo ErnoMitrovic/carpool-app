@@ -5,7 +5,8 @@ export enum BookingStatus {
     PENDING = 'PENDING',
     ACCEPTED = 'ACCEPTED',
     REJECTED = 'REJECTED',
-    CANCELLED = 'CANCELLED'
+    CANCELLED = 'CANCELLED',
+    COMPLETED = 'COMPLETED'
 }
 
 export interface BookingRequest {
@@ -35,5 +36,17 @@ export const getBookings = async (request: BookingRequest) => {
         }
     });
 
+    return response.data;
+}
+
+export const bookRide = async (rideId: number) => {
+    const response = await httpInstance.post(`/ride/${rideId}/booking`);
+    return response.data;
+}
+
+export const setBookingStatus = async (rideId: number, bookingId: number, status: BookingStatus) => {
+    const response = await httpInstance.put(`ride/${rideId}/booking/${bookingId}`, {
+        status
+    });
     return response.data;
 }

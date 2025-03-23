@@ -24,6 +24,15 @@ const UserLayout = () => {
         }}
       />
       <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons size={size} name="person" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="select-ride"
         options={{
           href: null

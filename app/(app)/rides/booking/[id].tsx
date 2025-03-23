@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, View } from 'react-native'
 import React from 'react'
 import { Button, Card, Divider, Text, useTheme } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
-import { BookingRequest, BookingResponse, BookingStatus, getBookings } from '@/services/booking';
+import { BookingRequest, BookingResponse, BookingStatus, getBookings, setBookingStatus } from '@/services/booking';
 import { useLocalSearchParams } from 'expo-router';
 import AppActivityIndicator from '@/components/AppActivityIndicator/AppActivityIndicator';
 import { Ionicons } from '@expo/vector-icons';
@@ -34,6 +34,14 @@ const BookingsView = () => {
         setLoading(false);
     }
 
+    const acceptBooking = async (bookingId: number) => {
+        await setBookingStatus(Number(id), bookingId, BookingStatus.ACCEPTED);
+    }
+
+    const rejectBooking = async (bookingId: number) => {
+        await setBookingStatus(Number(id), bookingId, BookingStatus.REJECTED);
+    }
+
     React.useEffect(() => {
         fetchBookings();
     }, [id])
@@ -54,8 +62,8 @@ const BookingsView = () => {
                         <Card>
                             <Card.Title title={item.username} subtitle={item.userRole} />
                             <Card.Actions>
-                                <Button>Accept</Button>
-                                <Button>Reject</Button>
+                                <Button onPress={() => rejectBooking(item.bookingId)}>Reject</Button>
+                                <Button onPress={() => acceptBooking(item.bookingId)}>Accept</Button>
                             </Card.Actions>
                         </Card>
                     )}

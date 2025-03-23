@@ -9,6 +9,7 @@ import { CarpoolMap } from '@/components/CarpoolMap';
 import { useLocation } from '@/store/LocationContext';
 import AppActivityIndicator from '@/components/AppActivityIndicator/AppActivityIndicator';
 import { MapMarkerProps } from 'react-native-maps';
+import { bookRide } from '@/services/booking';
 
 type SearchParams = {
     userLat: string;
@@ -44,8 +45,9 @@ const SelectRideView = () => {
     }
 
 
-    const handleSelected = (ride: RideResponse) => {
-        setSelected(ride);
+    const handleSelected = async (ride: RideResponse) => {
+        await bookRide(ride.id);
+        router.navigate('/');
     }
 
     React.useEffect(() => {

@@ -1,17 +1,17 @@
-import { ActivityIndicator, StyleSheet, useColorScheme, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { StyleSheet } from 'react-native'
+import React, { useState } from 'react'
 import { CarpoolMap } from '@/components/CarpoolMap'
 import { StatusBar } from 'expo-status-bar'
-import { MapMarkerProps, Region } from 'react-native-maps'
-import { getCurrentPositionAsync, LocationObject, useForegroundPermissions } from 'expo-location'
+import { MapMarkerProps } from 'react-native-maps'
 import { SearchBar } from '@/components/SearchBar'
-import { Position } from '@/services/autocomplete'
 import { TimePicker } from '@/components/TimePicker'
 import { Button, HelperText, Surface } from 'react-native-paper'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { getRides, LocationPojo, SearchRideRequest } from '@/services/ride'
+import { LocationPojo, SearchRideRequest } from '@/services/ride'
 import { useLocation } from '@/store/LocationContext'
 import { Controller, useForm } from 'react-hook-form'
+import AppActivityIndicator from '@/components/AppActivityIndicator/AppActivityIndicator'
+import { useRouter } from 'expo-router'
 
 type SearchRideForm = {
   startLocation: LocationPojo;
@@ -21,47 +21,33 @@ type SearchRideForm = {
 
 const RideScreen = () => {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { location } = useLocation()
   const [startMarker, setStartMarker] = useState<MapMarkerProps>();
   const [endMarker, setEndMarker] = useState<MapMarkerProps>();
 
   const { control, handleSubmit, formState: { errors, isValid } } = useForm<SearchRideForm>({
     defaultValues: {
-      startLocation: {
-        address: '',
-        name: '',
-        position: {
-          x: 0,
-          y: 0
-        }
-      },
-      endLocation: {
-        address: '',
-        name: '',
-        position: {
-          x: 0,
-          y: 0
-        }
-      },
       dateTime: new Date()
     }
   });
 
   const handleSearchRide = async (data: SearchRideForm) => {
-    const request: SearchRideRequest = {
+    const request = {
       userLat: data.startLocation.position.y,
-      userLng: data.endLocation.position.x,
+      userLng: data.startLocation.position.x,
       destLat: data.endLocation.position.y,
       destLng: data.endLocation.position.x,
-      departureDatetime: data.dateTime
+      departureDatetime: data.dateTime.toISOString()
     }
-
-    const response = await getRides(request);
-    console.log(response);
+    router.push({
+      pathname: '/select-ride',
+      params: request
+    })
   }
 
   if (!location) {
-    return <ActivityIndicator size="large" style={styles.container} />
+    return <AppActivityIndicator />
   }
 
   return (

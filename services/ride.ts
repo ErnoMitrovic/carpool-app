@@ -1,3 +1,4 @@
+import { PageableResponse } from ".";
 import httpInstance from "./httpInstance"
 
 export interface PositionPojo {
@@ -18,6 +19,8 @@ export interface RideRequest {
     startLocation: LocationPojo;
     endLocation: LocationPojo;
     rideDescription: string;
+    page?: number;
+    size?: number;
 }
 
 export interface SearchRideRequest {
@@ -71,7 +74,7 @@ export const cancelRide = async (rideId: string) => {
 }
 
 export const getRides = async (request: SearchRideRequest) => {
-    const response = await httpInstance.get<RideResponse[]>('/ride', {
+    const response = await httpInstance.get<PageableResponse<RideResponse>>('/ride', {
         params: request
     });
     return response.data;

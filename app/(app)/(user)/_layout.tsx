@@ -1,16 +1,18 @@
 import React from 'react'
-import { CarpoolTabBar } from '@/components/CarpoolTabBar';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from 'react-native-paper';
 
 const UserLayout = () => {
+  const theme = useTheme();
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarStyle: { backgroundColor: theme.colors.surface },
       }}
-      tabBar={(props) => <CarpoolTabBar {...props} />}
     >
       <Tabs.Screen
         name="search-ride"
@@ -22,21 +24,9 @@ const UserLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="Chat"
+        name="select-ride"
         options={{
-          tabBarLabel: 'Chat',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons size={size} name="chatbubbles" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="Profile"
-        options={{
-          tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons size={size} name="person" color={color} />
-          ),
+          href: null
         }}
       />
     </Tabs>

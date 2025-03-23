@@ -4,4 +4,5 @@ export interface CarpoolMapProps {
     initialRegion?: Region;
     markers: MapMarkerProps[];
     currentRegion?: Region;
+    routePoints?: MapMarkerProps[];
 }

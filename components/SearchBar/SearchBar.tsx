@@ -54,7 +54,6 @@ const SearchBar: FC<SearchBarProps> = ({ placeholder, onLocationSelect, currentP
                                 <IconSymbol name="location" size={size} color={color} />
                             )} />}
                             onPress={() => {
-                                console.log(item.title, item.position, item.address.label);
                                 setSuggestions([]);
                                 onLocationSelect({
                                     position: {

@@ -62,7 +62,6 @@ const DriverRideScreen: React.FC<DriverRideScreenProps> = ({
     const { top } = useSafeAreaInsets();
 
     const onSubmitForm = async (data: RideRequest) => {
-        console.log(data);
         await onSubmit(data);
         setSnackbarVisible(true);
     }

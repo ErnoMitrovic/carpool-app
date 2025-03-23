@@ -22,7 +22,7 @@ const App = () => {
   }
 
   if (role === Role.USER) {
-    return <Redirect href="/(app)/(user)/index" />
+    return <Redirect href="/search-ride" />
   }
 }
 

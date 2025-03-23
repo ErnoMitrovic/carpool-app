@@ -20,6 +20,14 @@ export interface RideRequest {
     rideDescription: string;
 }
 
+export interface SearchRideRequest {
+    userLat: number;
+    userLng: number;
+    destLat: number;
+    destLng: number;
+    departureDatetime: Date;
+}
+
 export interface RideResponse {
     id: number;
     departureDatetime: string;
@@ -54,9 +62,17 @@ export const getRide = async (rideId: string) => {
 }
 
 export const updateRide = async (rideId: string, ride: RideRequest) => {
-    await httpInstance.put(`/ride/${rideId}`, ride);
+    const response = await httpInstance.put(`/ride/${rideId}`, ride);
+    return response.data;
 }
 
 export const cancelRide = async (rideId: string) => {
     await httpInstance.delete(`/ride/${rideId}`);
+}
+
+export const getRides = async (request: SearchRideRequest) => {
+    const response = await httpInstance.get<RideResponse[]>('/ride', {
+        params: request
+    });
+    return response.data;
 }

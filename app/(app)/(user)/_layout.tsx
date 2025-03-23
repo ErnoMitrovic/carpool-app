@@ -1,46 +1,45 @@
-import { View, Text, Platform } from 'react-native'
 import React from 'react'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CarpoolTabBar } from '@/components/CarpoolTabBar';
-import { IconSymbol } from '@/app-example/components/ui/IconSymbol.ios';
-import ChatScreen from '../chat';
-import RideScreen from '.';
-import ProfileScreen from '../../../screens/ProfileScreen';
-
-const Tab = createBottomTabNavigator();
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 const UserLayout = () => {
+
   return (
-    <Tab.Navigator screenOptions={{
-      tabBarStyle: Platform.select({
-        ios: {
-          position: 'absolute',
-        },
-        default: {},
-      }),
-      headerShown: false,
-    }}
-      tabBar={CarpoolTabBar}>
-      <Tab.Screen
-        name="Ride" component={RideScreen}
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+      }}
+      tabBar={(props) => <CarpoolTabBar {...props} />}
+    >
+      <Tabs.Screen
+        name="search-ride"
         options={{
           tabBarLabel: 'Ride',
-          tabBarIcon: ({ color, size }) => <IconSymbol size={size} name="car.fill" color={color} />
-        }} />
-      <Tab.Screen
-        name="Chat" component={ChatScreen}
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons size={size} name="car" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Chat"
         options={{
           tabBarLabel: 'Chat',
-          tabBarIcon: ({ color, size }) => <IconSymbol size={size} name="message.fill" color={color} />
-        }} />
-      <Tab.Screen
-        name='Profile' component={ProfileScreen}
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons size={size} name="chatbubbles" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Profile"
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => <IconSymbol size={size} name="person.fill" color={color} />
-        }} />
-
-    </Tab.Navigator>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons size={size} name="person" color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   )
 }
 

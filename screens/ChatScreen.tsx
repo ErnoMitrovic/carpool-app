@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   View, 
-  Text, 
   StyleSheet, 
-  TextInput, 
   TouchableOpacity, 
   FlatList, 
   KeyboardAvoidingView, 
@@ -14,6 +12,7 @@ import { ChatConnection, ChatMessage, ChatType } from '@/services/chat';
 import { useAuth } from '@/store/AuthContext';
 import { Colors } from '@/constants/Colors';
 import { StatusBar } from 'expo-status-bar';
+import { Text, TextInput, useTheme } from 'react-native-paper';
 
 // Mock data for testing - replace with actual data from backend
 const MOCK_RIDES = [
@@ -27,6 +26,7 @@ const MOCK_USERS = [
 ];
 
 const ChatScreen = () => {
+  const theme = useTheme();
   const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [messageText, setMessageText] = useState('');
@@ -137,7 +137,7 @@ const ChatScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <StatusBar style="auto" />
       
       {!selectedChat ? (
@@ -196,7 +196,6 @@ const ChatScreen = () => {
               value={messageText}
               onChangeText={setMessageText}
               placeholder="Type a message..."
-              placeholderTextColor="#888"
               multiline
             />
             <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
@@ -212,7 +211,6 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   chatSelection: {
     flex: 1,
@@ -232,11 +230,9 @@ const styles = StyleSheet.create({
     color: Colors.light.tint,
   },
   chatOption: {
-    backgroundColor: '#fff',
     padding: 16,
     marginVertical: 8,
     borderRadius: 8,
-    shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 2,
@@ -336,9 +332,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     padding: 12,
-    backgroundColor: '#fff',
     borderTopWidth: 1,
-    borderTopColor: '#ddd',
   },
   input: {
     flex: 1,

@@ -7,7 +7,7 @@ import Constants from 'expo-constants';
 import MapViewDirections from 'react-native-maps-directions';
 import { useTheme } from 'react-native-paper';
 
-const CarpoolMap: FC<CarpoolMapProps> = ({ initialRegion, markers, currentRegion, routePoints }) => {
+const CarpoolMap: FC<CarpoolMapProps> = ({ initialRegion, markers, routePoints }) => {
     const MAPS_API_KEY = Constants.expoConfig?.android?.config?.googleMaps?.apiKey;
 
     const [loaded, setLoaded] = useState(false);
@@ -32,13 +32,6 @@ const CarpoolMap: FC<CarpoolMapProps> = ({ initialRegion, markers, currentRegion
     }, [initialRegion]);
 
     useEffect(() => {
-        if (currentRegion && mapRef.current) {
-            mapRef.current.animateToRegion(currentRegion);
-            mapRef.current.animateCamera({ center: currentRegion });
-        }
-    }, [currentRegion]);
-
-    useEffect(() => {
         if (mapRef.current && markers.length > 0 && loaded) {
             mapRef.current.fitToCoordinates(
                 markers.map(m => m.coordinate),
@@ -50,14 +43,13 @@ const CarpoolMap: FC<CarpoolMapProps> = ({ initialRegion, markers, currentRegion
         }
     }, [markers, loaded]);
 
-    return (
-        <View style={styles.container}>
-            {loaded && <MapView style={styles.map}
+    if (loaded) {
+        return (
+            <MapView style={styles.map}
                 followsUserLocation={true}
                 showsUserLocation={true}
                 loadingEnabled={true}
                 initialRegion={initialRegion}
-                region={currentRegion}
                 ref={mapRef}
                 userInterfaceStyle={colorScheme === 'dark' ? 'dark' : 'light'}
                 customMapStyle={colorScheme === 'dark' ? darkMapStyle : []}>
@@ -74,9 +66,9 @@ const CarpoolMap: FC<CarpoolMapProps> = ({ initialRegion, markers, currentRegion
                     strokeWidth={3}
                     apikey={MAPS_API_KEY}
                 />)}
-            </MapView>}
-        </View>
-    )
+            </MapView>
+        )
+    }
 }
 
 export default CarpoolMap
@@ -88,6 +80,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     map: {
-        ...StyleSheet.absoluteFillObject
+        flex: 1,
     }
 })

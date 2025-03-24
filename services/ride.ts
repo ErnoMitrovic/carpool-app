@@ -29,6 +29,7 @@ export interface SearchRideRequest {
     destLat: number;
     destLng: number;
     departureDatetime: Date;
+    radius?: number;
 }
 
 export interface RideResponse {

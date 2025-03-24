@@ -23,23 +23,6 @@ const DriverRideScreen: React.FC<DriverRideScreenProps> = ({
         departureDatetime: new Date(),
         availableSeats: 1,
         costPerSeat: 0,
-        startLocation: {
-            address: '',
-            name: '',
-            position: {
-                x: 0,
-                y: 0
-            }
-        },
-        endLocation: {
-            address: '',
-            name: '',
-            position: {
-                x: 0,
-                y: 0
-            }
-        },
-        rideDescription: ''
     },
     onSubmit,
     onDismiss,
@@ -86,7 +69,7 @@ const DriverRideScreen: React.FC<DriverRideScreenProps> = ({
                     render={({ field: { onChange, value } }) => (
                         <>
                             <SearchBar
-                                query={value.name}
+                                query={value?.name}
                                 setQuery={onChange}
                                 currentPosition={{
                                     latitude: location?.y,
@@ -111,7 +94,7 @@ const DriverRideScreen: React.FC<DriverRideScreenProps> = ({
                     render={({ field: { value, onChange } }) => (
                         <>
                             <SearchBar
-                                query={value.name}
+                                query={value?.name}
                                 setQuery={onChange}
                                 currentPosition={{
                                     latitude: location?.y,

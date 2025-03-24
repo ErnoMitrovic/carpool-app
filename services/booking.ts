@@ -16,6 +16,13 @@ export interface BookingRequest {
     size?: number;
 }
 
+export interface UserBookingsRequest {
+    userId: string;
+    statusValue: BookingStatus;
+    page?: number;
+    size?: number;
+}
+
 export interface BookingResponse {
     bookingId: number;
     rideId: number;
@@ -47,6 +54,18 @@ export const bookRide = async (rideId: number) => {
 export const setBookingStatus = async (rideId: number, bookingId: number, status: BookingStatus) => {
     const response = await httpInstance.put(`ride/${rideId}/booking/${bookingId}`, {
         status
+    });
+    return response.data;
+}
+
+export const getUserBookings = async (request: UserBookingsRequest) => {
+    const { userId, statusValue, page, size } = request;
+    const response = await httpInstance.get<PageableResponse<BookingResponse>>(`/user/${userId}/bookings`, {
+        params: {
+            statusValue,
+            page,
+            size
+        }
     });
     return response.data;
 }

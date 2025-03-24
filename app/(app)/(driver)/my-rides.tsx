@@ -100,6 +100,7 @@ const RidesScreen = () => {
             <Button onPress={_ => {
               cancelRide(rideCancelId)
               setCancelDialogVisible(false)
+              router.replace('/my-rides')
             }}>Yes</Button>
           </Dialog.Actions>
         </Dialog>

@@ -2,12 +2,11 @@ import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native'
 import React from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getRides, RideResponse, SearchRideRequest } from '@/services/ride';
-import { Appbar, Text, useTheme } from 'react-native-paper';
-import { StatusBar } from 'expo-status-bar';
+import { Appbar, Button, Text, TextInput, useTheme } from 'react-native-paper';
 import { RideCard } from '@/components/RideCard';
 import { CarpoolMap } from '@/components/CarpoolMap';
 import { useLocation } from '@/store/LocationContext';
-import AppActivityIndicator from '@/components/AppActivityIndicator/AppActivityIndicator';
+import { AppActivityIndicator } from '@/components/AppActivityIndicator';
 import { MapMarkerProps } from 'react-native-maps';
 import { bookRide } from '@/services/booking';
 
@@ -25,9 +24,10 @@ const SelectRideView = () => {
     const router = useRouter();
     const { width } = useWindowDimensions();
     const { location } = useLocation();
-
     const [selected, setSelected] = React.useState<RideResponse>();
     const [rides, setRides] = React.useState<RideResponse[]>([]);
+    const [loading, setLoading] = React.useState(false);
+    const [radius, setRadius] = React.useState(500);
 
     const fetchRides = async () => {
         const request: SearchRideRequest = {
@@ -35,12 +35,17 @@ const SelectRideView = () => {
             userLng: parseFloat(params.userLng),
             destLat: parseFloat(params.destLat),
             destLng: parseFloat(params.destLng),
-            departureDatetime: new Date(params.departureDatetime)
+            departureDatetime: new Date(params.departureDatetime),
+            radius
         };
-        const response = await getRides(request);
-        setRides(response.content);
-        if (response.content.length > 0) {
-            setSelected(response.content[0]);
+        try {
+            const response = await getRides(request);
+            setRides(response.content);
+            if (response.content.length > 0) {
+                setSelected(response.content[0]);
+            }
+        } catch (error) {
+            setRides([]);
         }
     }
 
@@ -51,7 +56,9 @@ const SelectRideView = () => {
     }
 
     React.useEffect(() => {
+        setLoading(true);
         fetchRides();
+        setLoading(false);
     }, [params.userLat, params.userLng, params.destLat, params.destLng, params.departureDatetime])
 
     const routePoints = React.useMemo(() => {
@@ -118,8 +125,29 @@ const SelectRideView = () => {
         return baseMarkers;
     }, [params.userLat, params.userLng, params.destLat, params.destLng, selected]);
 
-    if (location === null) {
+    if (location === null || loading) {
         return <AppActivityIndicator />
+    }
+
+    if (rides.length === 0) {
+        return (< >
+            <Appbar.Header>
+                <Appbar.BackAction onPress={router.back} />
+                <Appbar.Content title='Select Ride' />
+            </Appbar.Header>
+            <View style={{ flex: 1, backgroundColor: theme.colors.background, padding: 15, }}>
+                <Text variant='bodyMedium'>No rides available. Try adjusting the radius</Text>
+                <TextInput
+                    label='Radius'
+                    keyboardType='number-pad'
+                    value={radius.toString()}
+                    onChangeText={value => setRadius(Number(value))}
+                    right={<TextInput.Affix text='m' />}
+                    style={{ marginVertical: 10 }}
+                />
+                <Button mode='contained' onPress={fetchRides}>Search</Button>
+            </View>
+        </>)
     }
 
     return (
@@ -159,9 +187,3 @@ const SelectRideView = () => {
 }
 
 export default SelectRideView
-
-const styles = StyleSheet.create({
-    carousel: {
-        paddingVertical: 10,
-    },
-})

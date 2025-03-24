@@ -11,16 +11,21 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ phone, onChangePhone, onBlur })
         "dialCode": "+49",
         "code": "DE"
     })
+    const [rawPhone, setRawPhone] = React.useState(phone)
 
     const showModal = () => setModalVisible(true)
     const hideModal = () => setModalVisible(false)
 
-    const handleSelectedCountry = (countryCode: CountryCode) => {
-        setCountry(countryCode)
+    const handleSelectedCountry = (newCountry: CountryCode) => {
+        const updatedRawNumber = phone.replace(country.dialCode, '')
+        setCountry(newCountry)
+        setRawPhone(updatedRawNumber)
+        onChangePhone(newCountry.dialCode + updatedRawNumber)
         setModalVisible(false)
     }
 
     const handlePhoneChange = (inputPhoneNumber: string) => {
+        setRawPhone(inputPhoneNumber)
         onChangePhone(country.dialCode+inputPhoneNumber)
     }
 
@@ -30,7 +35,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ phone, onChangePhone, onBlur })
                 onBlur={onBlur}
                 placeholder='Phone number'
                 keyboardType='phone-pad'
-                value={phone.replace(country.dialCode, '')}
+                value={rawPhone}
                 onChangeText={handlePhoneChange}
                 left={<TextInput.Icon onPress={showModal} icon={
                     ({ size }) => (

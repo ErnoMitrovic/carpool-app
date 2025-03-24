@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LocationPojo, SearchRideRequest } from '@/services/ride'
 import { useLocation } from '@/store/LocationContext'
 import { Controller, useForm } from 'react-hook-form'
-import AppActivityIndicator from '@/components/AppActivityIndicator/AppActivityIndicator'
+import { AppActivityIndicator } from '@/components/AppActivityIndicator'
 import { useRouter } from 'expo-router'
 
 type SearchRideForm = {
@@ -41,7 +41,7 @@ const RideScreen = () => {
       departureDatetime: data.dateTime.toISOString()
     }
     router.push({
-      pathname: '/select-ride',
+      pathname: '/rides/select',
       params: request
     })
   }

@@ -2,6 +2,8 @@ import React from 'react'
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from 'react-native-paper';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const UserLayout = () => {
   const theme = useTheme();
@@ -14,6 +16,15 @@ const UserLayout = () => {
         tabBarStyle: { backgroundColor: theme.colors.surface },
       }}
     >
+      <Tabs.Screen
+        name='my-bookings'
+        options={{
+          tabBarLabel: 'Bookings',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons size={size} name='book' color={color} />
+          )
+        }}
+      />
       <Tabs.Screen
         name="search-ride"
         options={{
@@ -30,12 +41,6 @@ const UserLayout = () => {
           tabBarIcon: ({ color, size }) => (
             <Ionicons size={size} name="person" color={color} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="select-ride"
-        options={{
-          href: null
         }}
       />
     </Tabs>

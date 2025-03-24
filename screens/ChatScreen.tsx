@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  View, 
-  StyleSheet, 
-  TouchableOpacity, 
-  FlatList, 
-  KeyboardAvoidingView, 
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  KeyboardAvoidingView,
   Platform,
   SafeAreaView
 } from 'react-native';
@@ -12,7 +12,7 @@ import { ChatConnection, ChatMessage, ChatType } from '@/services/chat';
 import { useAuth } from '@/store/AuthContext';
 import { Colors } from '@/constants/Colors';
 import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput, useTheme } from 'react-native-paper';
+import { Appbar, Button, Text, TextInput, useTheme } from 'react-native-paper';
 
 // Mock data for testing - replace with actual data from backend
 const MOCK_RIDES = [
@@ -25,7 +25,11 @@ const MOCK_USERS = [
   { id: 'user2', name: 'Bob' },
 ];
 
-const ChatScreen = () => {
+export interface ChatScreenProps {
+  handleBack: () => void;
+}
+
+const ChatScreen: React.FC<ChatScreenProps> = ({ handleBack }) => {
   const theme = useTheme();
   const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -42,7 +46,7 @@ const ChatScreen = () => {
 
     setSelectedChat({ id, name, type });
     setMessages([]);
-    
+
     // Connect to WebSocket for the selected chat
     if (user?.username) {
       chatConnection.current = new ChatConnection(
@@ -66,7 +70,7 @@ const ChatScreen = () => {
           },
         }
       );
-      
+
       chatConnection.current.connect();
     }
   };
@@ -74,7 +78,7 @@ const ChatScreen = () => {
   // Send a message
   const sendMessage = () => {
     if (!messageText.trim() || !chatConnection.current) return;
-    
+
     chatConnection.current.sendMessage(messageText);
     setMessageText('');
   };
@@ -83,12 +87,12 @@ const ChatScreen = () => {
   const markAsRead = (messageId: string) => {
     if (chatConnection.current) {
       chatConnection.current.markAsRead(messageId);
-      
+
       // Update UI optimistically
-      setMessages(prevMessages => 
-        prevMessages.map(msg => 
-          msg.id === messageId 
-            ? { ...msg, status: 'READ' } 
+      setMessages(prevMessages =>
+        prevMessages.map(msg =>
+          msg.id === messageId
+            ? { ...msg, status: 'READ' }
             : msg
         )
       );
@@ -107,7 +111,7 @@ const ChatScreen = () => {
   // Message item component
   const renderMessage = ({ item }: { item: ChatMessage }) => {
     const isMe = item.senderId === user?.username;
-    
+
     return (
       <View style={[styles.messageContainer, isMe ? styles.sentMessage : styles.receivedMessage]}>
         {!isMe && <Text style={styles.sender}>{item.senderId}</Text>}
@@ -117,13 +121,13 @@ const ChatScreen = () => {
             {new Date(item.timestamp).toLocaleTimeString()}
           </Text>
           {isMe && (
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => item.status !== 'READ' && markAsRead(item.id)}
               disabled={item.status === 'READ'}
             >
-              <Text 
+              <Text
                 style={[
-                  styles.status, 
+                  styles.status,
                   item.status === 'READ' ? styles.readStatus : styles.unreadStatus
                 ]}
               >
@@ -139,35 +143,34 @@ const ChatScreen = () => {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <StatusBar style="auto" />
-      
+      <Appbar.Header>
+        <Appbar.BackAction onPress={handleBack} />
+        <Appbar.Content title="Chat" />
+      </Appbar.Header>
       {!selectedChat ? (
         <View style={styles.chatSelection}>
-          <Text style={styles.header}>Chats</Text>
-          
-          <Text style={styles.sectionTitle}>Group Chats (Rides)</Text>
+          <Text variant='titleLarge'>Group Chats (Rides)</Text>
           {MOCK_RIDES.map(ride => (
-            <TouchableOpacity 
+            <Button
               key={ride.id}
-              style={styles.chatOption}
               onPress={() => selectChat(ride.id, ride.name, 'group')}
             >
-              <Text style={styles.chatName}>{ride.name}</Text>
-            </TouchableOpacity>
+              {ride.name}
+            </Button>
           ))}
-          
-          <Text style={styles.sectionTitle}>Private Chats</Text>
+
+          <Text variant='titleLarge'>Private Chats</Text>
           {MOCK_USERS.map(user => (
-            <TouchableOpacity 
+            <Button
               key={user.id}
-              style={styles.chatOption}
               onPress={() => selectChat(user.id, user.name, 'private')}
             >
-              <Text style={styles.chatName}>{user.name}</Text>
-            </TouchableOpacity>
+              {user.name}
+            </Button>
           ))}
         </View>
       ) : (
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           style={styles.chatContainer}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
@@ -181,7 +184,7 @@ const ChatScreen = () => {
               {isConnected ? 'Connected' : 'Disconnected'}
             </Text>
           </View>
-          
+
           <FlatList
             data={messages}
             renderItem={renderMessage}
@@ -189,7 +192,7 @@ const ChatScreen = () => {
             style={styles.messagesList}
             inverted={false}
           />
-          
+
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}

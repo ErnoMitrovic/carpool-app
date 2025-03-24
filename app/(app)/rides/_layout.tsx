@@ -18,13 +18,16 @@ const RideOperationLayout = () => {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+    <>
       <Appbar.Header>
         <Appbar.BackAction onPress={router.back} />
         <Appbar.Content title={processSegment()} />
       </Appbar.Header>
-      <Slot />
-    </SafeAreaView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+
+        <Slot />
+      </SafeAreaView>
+    </>
   )
 }
 

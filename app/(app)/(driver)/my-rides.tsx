@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAuth } from '@/store/AuthContext';
 import { cancelRide, getMyRides, RideResponse } from '@/services/ride';
-import { Button, Card, Dialog, Portal, SegmentedButtons, Text, useTheme } from 'react-native-paper';
+import { Button, Card, Dialog, IconButton, Portal, SegmentedButtons, Text, useTheme } from 'react-native-paper';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -58,7 +58,10 @@ const RidesScreen = () => {
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <Card>
-            <Card.Title title={item.endLocation.name} subtitle={convertDate(item.departureDatetime)} />
+            <Card.Title title={item.departureDatetime} subtitle={convertDate(item.departureDatetime)} 
+            left={(props) => <IconButton icon='map-marker' onPress={() => router.navigate({
+              pathname: '/rides/map/[id]', params: { id: item.id }
+            })} {...props} />} />
             <Card.Content>
               <Text>Pickup Location: {item.startLocation.name}</Text>
               <Text>Seats: {item.seats}</Text>

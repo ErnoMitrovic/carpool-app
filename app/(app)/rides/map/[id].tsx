@@ -76,9 +76,11 @@ const ViewRideScreen = () => {
         mode='contained'
         onPress={() => setChatVisible(!chatVisible)}
       />
-      <Portal>
-        <ChatScreen />
-      </Portal>
+      {chatVisible &&
+        <Portal>
+          <ChatScreen handleBack={() => setChatVisible(false)} />
+        </Portal>
+      }
     </View>
   )
 }

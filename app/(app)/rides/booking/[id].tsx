@@ -61,7 +61,7 @@ const BookingsView = () => {
                     keyExtractor={item => item.bookingId.toString()}
                     renderItem={({ item }) => (
                         <Card>
-                            <Card.Title title={item.username} subtitle={item.userRole} />
+                            <Card.Title title={item.username} />
                             <Card.Actions>
                                 <Button onPress={() => {
                                     rejectBooking(item.bookingId)
@@ -91,7 +91,7 @@ const BookingsView = () => {
                         keyExtractor={item => item.bookingId.toString()}
                         renderItem={({ item }) => (
                             <Card>
-                                <Card.Title title={item.username} subtitle={item.userRole}
+                                <Card.Title title={item.username}
                                     right={({ size }) => <Ionicons size={size} color={theme.colors.onSurface} name='checkmark-circle' />} />
                             </Card>
                         )}

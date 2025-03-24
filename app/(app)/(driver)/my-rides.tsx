@@ -25,14 +25,16 @@ const RidesScreen = () => {
   React.useEffect(() => {
     if (isLoaded && user) {
       const fetchRides = async () => {
-        if (filter === 'upcoming') {
-          const response = await getMyRides(user.uid, 0, 10, 'departureDatetime,asc');
-          setRides(response);
+        const response = await getMyRides(user.uid, 0, 10);
+        setRides(response.filter(ride => {
+          const now = new Date();
+          const rideDate = new Date(ride.departureDatetime);
+          if (filter === 'upcoming') {
+            return rideDate >= now && ride.status !== 'CANCELLED';
+          }
+          return rideDate < now;
         }
-        else {
-          const response = await getMyRides(user.uid, 0, 10);
-          setRides(response);
-        }
+        ));
       }
       fetchRides();
     }
@@ -63,10 +65,10 @@ const RidesScreen = () => {
               <Text>Status: {item.status}</Text>
             </Card.Content>
             <Card.Actions>
-              <Button onPress={() => router.push
+              <Button disabled={filter === 'past'} onPress={() => router.push
                 ({ pathname: '/rides/update/[id]', params: { id: item.id } })
               }>Edit</Button>
-              <Button onPress={() => {
+              <Button disabled={filter === 'past'} onPress={() => {
                 setCancelDialogVisible(true)
                 setRideCancelId(item.id.toString())
               }}>Cancel</Button>

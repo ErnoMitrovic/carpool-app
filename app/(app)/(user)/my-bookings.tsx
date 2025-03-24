@@ -1,12 +1,14 @@
 import { FlatList, StyleSheet } from 'react-native'
 import React from 'react'
-import { BookingResponse, BookingStatus, getUserBookings } from '@/services/booking';
+import { BookingResponse, BookingStatus, cancelBooking, getUserBookings } from '@/services/booking';
 import { useAuth } from '@/store/AuthContext';
 import { ActivityIndicator, Button, Card, SegmentedButtons, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 const MyBookingsScreen = () => {
     const theme = useTheme();
+    const router = useRouter();
     const { user } = useAuth();
     const [bookings, setBookings] = React.useState<BookingResponse[]>([]);
     const [loading, setLoading] = React.useState(false);
@@ -78,12 +80,17 @@ const MyBookingsScreen = () => {
                                 subtitle={`Status: ${item.bookingStatus}`}
                             />
                             <Card.Content>
-                                <Text>User Role: {item.userRole}</Text>
                                 <Text>Ride Status: {item.rideStatus}</Text>
                             </Card.Content>
                             <Card.Actions>
                                 <Button>View</Button>
-                                <Button>Cancel</Button>
+                                {statusFilter !== 'HISTORY' &&
+                                    <Button disabled={item.bookingStatus === 'HISTORY'}
+                                        onPress={() => {
+                                            cancelBooking(user?.uid || '', item.bookingId)
+                                            router.replace('/my-bookings')
+                                        }}>Cancel</Button>
+                                }
                             </Card.Actions>
                         </Card>
                     )}

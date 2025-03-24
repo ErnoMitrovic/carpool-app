@@ -27,7 +27,6 @@ export interface BookingResponse {
     bookingId: number;
     rideId: number;
     username: string;
-    userRole: string;
     bookingStatus: string;
     rideStatus: string;
 }
@@ -60,12 +59,17 @@ export const setBookingStatus = async (rideId: number, bookingId: number, status
 
 export const getUserBookings = async (request: UserBookingsRequest) => {
     const { userId, statusValue, page, size } = request;
-    const response = await httpInstance.get<PageableResponse<BookingResponse>>(`/user/${userId}/bookings`, {
+    const response = await httpInstance.get<PageableResponse<BookingResponse>>(`/user/${userId}/booking`, {
         params: {
             statusValue,
             page,
             size
         }
     });
+    return response.data;
+}
+
+export const cancelBooking = async (userId: string, bookingId: number) => {
+    const response = await httpInstance.delete(`/user/${userId}/booking/${bookingId}`);
     return response.data;
 }

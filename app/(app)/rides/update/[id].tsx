@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { getRide, RideRequest, RideResponse, updateRide } from '@/services/ride';
 import DriverRideScreen from '@/screens/DriverRideScreen';
 import { StyleSheet } from 'react-native';
-import AppActivityIndicator from '@/components/AppActivityIndicator/AppActivityIndicator';
+import { AppActivityIndicator } from '@/components/AppActivityIndicator';
 
 const UpdateRideView = () => {
     const router = useRouter();
@@ -36,7 +36,7 @@ const UpdateRideView = () => {
         router.back();
     }
 
-    if(!ride) {
+    if (!ride) {
         return <AppActivityIndicator />
     }
 

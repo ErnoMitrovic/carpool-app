@@ -2,11 +2,9 @@ import React from 'react'
 import { useAuth } from '@/store/AuthContext'
 import { Redirect } from 'expo-router'
 import { Role } from '@/services/auth'
-import { useTheme } from 'react-native-paper'
-import AppActivityIndicator from '@/components/AppActivityIndicator/AppActivityIndicator'
+import { AppActivityIndicator } from '@/components/AppActivityIndicator'
 
 const App = () => {
-  const theme = useTheme();
   const { isLoaded, isSignedIn, role } = useAuth()
 
   if (!isLoaded) {

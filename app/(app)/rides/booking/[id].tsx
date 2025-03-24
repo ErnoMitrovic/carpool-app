@@ -3,12 +3,13 @@ import React from 'react'
 import { Button, Card, Divider, Text, useTheme } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import { BookingRequest, BookingResponse, BookingStatus, getBookings, setBookingStatus } from '@/services/booking';
-import { useLocalSearchParams } from 'expo-router';
-import AppActivityIndicator from '@/components/AppActivityIndicator/AppActivityIndicator';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { AppActivityIndicator } from '@/components/AppActivityIndicator';
 import { Ionicons } from '@expo/vector-icons';
 
 const BookingsView = () => {
     const { id } = useLocalSearchParams<{ id: string }>();
+    const router = useRouter();
     const theme = useTheme();
     const [loading, setLoading] = React.useState(true);
     const [pending, setPending] = React.useState<BookingResponse[]>([]);
@@ -60,10 +61,22 @@ const BookingsView = () => {
                     keyExtractor={item => item.bookingId.toString()}
                     renderItem={({ item }) => (
                         <Card>
-                            <Card.Title title={item.username} subtitle={item.userRole} />
+                            <Card.Title title={item.username} />
                             <Card.Actions>
-                                <Button onPress={() => rejectBooking(item.bookingId)}>Reject</Button>
-                                <Button onPress={() => acceptBooking(item.bookingId)}>Accept</Button>
+                                <Button onPress={() => {
+                                    rejectBooking(item.bookingId)
+                                    router.replace({
+                                        pathname: '/rides/booking/[id]',
+                                        params: { id: id.toString() }
+                                    })
+                                }}>Reject</Button>
+                                <Button onPress={() => {
+                                    acceptBooking(item.bookingId)
+                                    router.replace({
+                                        pathname: '/rides/booking/[id]',
+                                        params: { id: id.toString() }
+                                    })
+                                }}>Accept</Button>
                             </Card.Actions>
                         </Card>
                     )}
@@ -78,7 +91,7 @@ const BookingsView = () => {
                         keyExtractor={item => item.bookingId.toString()}
                         renderItem={({ item }) => (
                             <Card>
-                                <Card.Title title={item.username} subtitle={item.userRole}
+                                <Card.Title title={item.username}
                                     right={({ size }) => <Ionicons size={size} color={theme.colors.onSurface} name='checkmark-circle' />} />
                             </Card>
                         )}

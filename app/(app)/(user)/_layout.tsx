@@ -15,6 +15,15 @@ const UserLayout = () => {
       }}
     >
       <Tabs.Screen
+        name='my-bookings'
+        options={{
+          tabBarLabel: 'Bookings',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons size={size} name='book' color={color} />
+          )
+        }}
+      />
+      <Tabs.Screen
         name="search-ride"
         options={{
           tabBarLabel: 'Ride',
@@ -30,12 +39,6 @@ const UserLayout = () => {
           tabBarIcon: ({ color, size }) => (
             <Ionicons size={size} name="person" color={color} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="select-ride"
-        options={{
-          href: null
         }}
       />
     </Tabs>

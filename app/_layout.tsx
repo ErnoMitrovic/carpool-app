@@ -25,11 +25,11 @@ const RootLayout = () => {
 
   return (
     <SafeAreaProvider>
-      <PaperProvider theme={colorScheme === 'dark' ? darkTheme : lightTheme}>
-        <AuthProvider>
+      <AuthProvider>
+        <PaperProvider theme={colorScheme === 'dark' ? darkTheme : lightTheme}>
           <Slot />
-        </AuthProvider>
-      </PaperProvider>
+        </PaperProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

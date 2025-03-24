@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAuth } from '@/store/AuthContext';
 import { cancelRide, getMyRides, RideResponse } from '@/services/ride';
-import { Button, Card, Dialog, Portal, SegmentedButtons, Text, useTheme } from 'react-native-paper';
+import { Button, Card, Dialog, IconButton, Portal, SegmentedButtons, Text, useTheme } from 'react-native-paper';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -25,14 +25,16 @@ const RidesScreen = () => {
   React.useEffect(() => {
     if (isLoaded && user) {
       const fetchRides = async () => {
-        if (filter === 'upcoming') {
-          const response = await getMyRides(user.uid, 0, 10, 'departureDatetime,asc');
-          setRides(response);
+        const response = await getMyRides(user.uid, 0, 10);
+        setRides(response.filter(ride => {
+          const now = new Date();
+          const rideDate = new Date(ride.departureDatetime);
+          if (filter === 'upcoming') {
+            return rideDate >= now && ride.status !== 'CANCELLED';
+          }
+          return rideDate < now;
         }
-        else {
-          const response = await getMyRides(user.uid, 0, 10);
-          setRides(response);
-        }
+        ));
       }
       fetchRides();
     }
@@ -56,17 +58,20 @@ const RidesScreen = () => {
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <Card>
-            <Card.Title title={item.endLocation.name} subtitle={convertDate(item.departureDatetime)} />
+            <Card.Title title={item.departureDatetime} subtitle={convertDate(item.departureDatetime)} 
+            left={(props) => <IconButton icon='map-marker' onPress={() => router.navigate({
+              pathname: '/rides/map/[id]', params: { id: item.id }
+            })} {...props} />} />
             <Card.Content>
               <Text>Pickup Location: {item.startLocation.name}</Text>
               <Text>Seats: {item.seats}</Text>
               <Text>Status: {item.status}</Text>
             </Card.Content>
             <Card.Actions>
-              <Button onPress={() => router.push
+              <Button disabled={filter === 'past'} onPress={() => router.push
                 ({ pathname: '/rides/update/[id]', params: { id: item.id } })
               }>Edit</Button>
-              <Button onPress={() => {
+              <Button disabled={filter === 'past'} onPress={() => {
                 setCancelDialogVisible(true)
                 setRideCancelId(item.id.toString())
               }}>Cancel</Button>
@@ -100,6 +105,7 @@ const RidesScreen = () => {
             <Button onPress={_ => {
               cancelRide(rideCancelId)
               setCancelDialogVisible(false)
+              router.replace('/my-rides')
             }}>Yes</Button>
           </Dialog.Actions>
         </Dialog>
